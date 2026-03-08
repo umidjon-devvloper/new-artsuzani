@@ -1,0 +1,319 @@
+
+
+@import "tailwindcss";
+@import "tw-animate-css";
+/* Dark mode variant: allows `dark:` anywhere under a .dark root */
+@custom-variant dark (&:is(.dark, .dark *));
+
+/* Map semantic Tailwind tokens (v4) to our CSS variables */
+@theme inline {
+  /* Fonts */
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: var(--font-cinzel), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  /* Radii derived from --radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Core color tokens */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  /* Charts (optional) */
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  /* Sidebar tokens */
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+/* --------------------------------------------------
+   Base theme tokens (HSL ONLY)
+-------------------------------------------------- */
+@layer base {
+  :root, .theme-bukhara {
+    /* Layout radius */
+    --radius: 0.75rem;
+
+    /* Base White Luxury App Palette (Theme 1: Bukhara Luxury) */
+    --background: 40 30% 98%; /* Soft Ivory/Beige */
+    --foreground: 20 15% 15%; /* Dark Brownish Text */
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 15% 15%;
+
+    /* Bukhara Primary: Deep Red / Burgundy */
+    --primary: 350 70% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Bukhara Secondary: Gold */
+    --secondary: 45 85% 65%;
+    --secondary-foreground: 20 15% 15%;
+
+    /* Muted: Beige/Ivory */
+    --muted: 40 30% 96%;
+    --muted-foreground: 20 10% 40%;
+
+    /* Accent: Emerald Green */
+    --accent: 165 65% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 20% 90%;
+    --input: 40 20% 94%;
+    --ring: 45 85% 65%; /* Gold ring */
+    
+    --bg-gradient: linear-gradient(135deg, hsl(40 40% 98%) 0%, hsl(40 30% 92%) 100%);
+
+    /* NEW GLOBAL SEMANTIC COLORS */
+    --bg-primary: #fcfcfc;
+    --bg-secondary: #f6f4ed;
+    --card-bg: #F5F1E8; 
+    --text-primary: #1c1512;
+    --text-secondary: #6e645f;
+    --theme-accent: #D4AF37;
+    --theme-accent-focus: #B5952F;
+    --border-theme: #e2d9cc;
+    --price-color: #8B1E2D;
+  }
+
+  .theme-silkroad {
+    --background: 140 10% 98%; /* Ivory tinted green */
+    --foreground: 165 30% 20%;
+
+    --primary: 165 65% 35%; /* Deep Emerald */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 45 85% 65%; /* Gold */
+    --secondary-foreground: 165 30% 20%;
+
+    --accent: 350 60% 50%; /* Soft Red */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 140 10% 95%;
+    --muted-foreground: 165 15% 40%;
+    --border: 140 10% 90%;
+    --ring: 45 85% 65%;
+    
+    --bg-gradient: linear-gradient(135deg, hsl(140 10% 98%) 0%, hsl(165 20% 92%) 100%);
+
+    /* NEW GLOBAL SEMANTIC COLORS */
+    --bg-primary: #f8faf8;
+    --bg-secondary: #eef2ef;
+    --card-bg: #eceae3; 
+    --text-primary: #121c17;
+    --text-secondary: #57685e;
+    --theme-accent: #D4AF37;
+    --theme-accent-focus: #B5952F;
+    --border-theme: #d6ded6;
+    --price-color: #2b704d;
+  }
+
+  .theme-minimal {
+    --background: 30 20% 99%; /* Very pale beige */
+    --foreground: 220 10% 20%;
+
+    --primary: 220 15% 30%; /* Soft Charcoal */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 15% 85%; /* Soft Sand */
+    --secondary-foreground: 220 10% 20%;
+
+    --accent: 30 25% 70%; /* Muted Gold/Taupe */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 30 10% 96%;
+    --muted-foreground: 220 5% 40%;
+    --border: 30 10% 92%;
+    --ring: 220 15% 30%;
+
+    --bg-gradient: linear-gradient(135deg, hsl(30 20% 99%) 0%, hsl(30 20% 96%) 100%);
+
+    /* NEW GLOBAL SEMANTIC COLORS */
+    --bg-primary: #fdfdfc;
+    --bg-secondary: #f7f6f5;
+    --card-bg: #f5f4f2; 
+    --text-primary: #15181f;
+    --text-secondary: #5c626b;
+    --theme-accent: #8b7d6b;
+    --theme-accent-focus: #6e6151;
+    --border-theme: #e2e1df;
+    --price-color: #3b4251;
+  }
+
+  .theme-heritage {
+    --background: 350 20% 12%; /* Dark Red/Brown */
+    --foreground: 40 30% 95%; /* Ivory Text */
+    
+    --card: 350 20% 14%;
+    --card-foreground: 40 30% 95%;
+    
+    --popover: 350 20% 14%;
+    --popover-foreground: 40 30% 95%;
+
+    --primary: 45 85% 60%; /* Bright Gold */
+    --primary-foreground: 350 20% 12%;
+
+    --secondary: 165 40% 25%; /* Deep Green */
+    --secondary-foreground: 40 30% 95%;
+
+    --accent: 350 50% 30%; /* Deep Red Accent */
+    --accent-foreground: 40 30% 95%;
+
+    --muted: 350 15% 20%;
+    --muted-foreground: 40 20% 75%;
+    --border: 350 15% 25%;
+    --input: 350 15% 20%;
+    --ring: 45 85% 60%;
+
+    --bg-gradient: linear-gradient(135deg, hsl(350 20% 14%) 0%, hsl(350 20% 10%) 100%);
+
+    /* NEW GLOBAL SEMANTIC COLORS (Dark Heritage) */
+    --bg-primary: #2d0a10; /* Deep burgundy */
+    --bg-secondary: #1a0f0d; /* Dark brown */
+    --card-bg: #211311; /* Dark brown for cards */
+    --text-primary: #fcfdf8; /* Ivory text */
+    --text-secondary: #e6dac3; /* Soft beige */
+    --theme-accent: #D4AF37; /* Gold */
+    --theme-accent-focus: #B5952F;
+    --border-theme: #8b6e27; /* Dark gold border */
+    --price-color: #D4AF37; /* Gold for prices in dark mode */
+  }
+
+  :root, .theme-bukhara, .theme-silkroad, .theme-minimal, .theme-heritage {
+    /* The 6-color Bukhara Palette Explicit Tokens */
+    --bukhara-deep-red: 350 70% 45%;
+    --bukhara-gold: 45 85% 65%;
+    --bukhara-dark-brown: 20 15% 15%;
+    --bukhara-beige: 40 30% 92%;
+    --bukhara-emerald: 165 65% 45%;
+    --bukhara-ivory: 40 40% 98%;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Non-color tokens */
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --shadow-elegant-light: 0 10px 40px -10px rgba(0,0,0,0.08);
+    --shadow-soft: 0 4px 20px -2px rgba(0,0,0,0.05);
+  }
+
+  /* Nullify dark mode since we strictly want our themes to control */
+  .dark {
+    --background: 350 20% 12%; 
+    --foreground: 40 30% 95%; 
+    --card: 350 20% 14%;
+    --card-foreground: 40 30% 95%;
+    --border: 350 15% 25%;
+  }
+}
+
+/* --------------------------------------------------
+   Base resets using our tokens
+-------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply text-foreground font-sans;
+    background-image: var(--bg-gradient);
+    background-attachment: fixed;
+    transition: background-image 0.8s ease-in-out, background-color 0.8s ease-in-out, color 0.5s ease-in-out;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif tracking-wide;
+  }
+}
+
+/* --------------------------------------------------
+   Helpful component-level utilities (opt-in)
+   - Use when you need gradient/shadow to   kens
+-------------------------------------------------- */
+@utility bg-gradient-primary {
+  background-image: linear-gradient(
+    135deg,
+    hsl(var(--bukhara-deep-red)),
+    hsl(var(--bukhara-gold))
+  );
+}
+@utility bg-gradient-secondary {
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--bukhara-ivory)),
+    hsl(var(--bukhara-beige))
+  );
+}
+@utility bg-gradient-hero {
+  background-image: linear-gradient(
+    135deg,
+    hsl(var(--background)) 0%,
+    hsl(var(--bukhara-beige)) 100%
+  );
+}
+
+@utility shadow-elegant {
+  box-shadow: var(--shadow-elegant-light);
+}
+@utility shadow-elegant-light {
+  box-shadow: var(--shadow-elegant-light);
+}
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+/* Card primitive example (optional) */
+@layer components {
+  .card {
+    @apply rounded-xl bg-card text-card-foreground border border-border shadow-soft transition-all duration-300;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant-light;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-md bg-gradient-primary text-white px-4 py-2 font-medium shadow-soft hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-opacity;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-md bg-secondary text-secondary-foreground px-4 py-2 font-medium shadow-soft hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-opacity;
+  }
+}
