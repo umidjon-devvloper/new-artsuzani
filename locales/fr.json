@@ -1,0 +1,28 @@
+{
+  "Navigation": {
+    "home": "Accueil",
+    "search": "Recherche",
+    "categories": "Catégories",
+    "products": "Produits",
+    "cart": "Panier",
+    "orders": "Commandes",
+    "profile": "Profil"
+  },
+  "Common": {
+    "addToCart": "Ajouter au Panier",
+    "freeShipping": "Livraison Gratuite 🌍",
+    "checkout": "Commander",
+    "deliveryEstimate": "Livraison: 7–14 jours"
+  },
+  "Checkout": {
+    "shippingInfoTitle": "Livraison Gratuite",
+    "shippingInfoDesc": "Aucun frais de livraison supplémentaire"
+  },
+  "Home": {
+    "categoriesTitle": "Explorez l'Authenticité",
+    "productsTitle": "Chefs-d'œuvre sélectionnés"
+  },
+  "Cart": {
+    "title": "Panier"
+  }
+}

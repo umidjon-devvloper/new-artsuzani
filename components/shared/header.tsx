@@ -14,7 +14,9 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "./language-switcher";
 import { createUser } from "@/actions/user.actions";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -34,6 +36,7 @@ const Header = ({
   cartLength: number;
 }) => {
   const { user } = useUser();
+  const t = useTranslations("Navigation");
   const calledRef = useRef(false);
 
   const [query, setQuery] = useState("");
@@ -157,12 +160,12 @@ const Header = ({
           </Link>
 
           {/* Nav (desktop) */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             <Link
               href="/"
               className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
             >
-              Home
+              {t("home")}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
             <Link
@@ -176,29 +179,32 @@ const Header = ({
               href="/products"
               className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
             >
-              Products
+              {t("products")}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
             <Link
               href="/blog"
               className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
             >
-              Blogs
+              Blog
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
             <Link
               href="/orders"
               className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
             >
-              Orders
+              {t("orders")}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
           </nav>
 
           {/* Right */}
-          <div className="flex items-center space-x-5" ref={wrapRef}>
+          <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapRef}>
+            <div className="hidden lg:flex">
+              <LanguageSwitcher />
+            </div>
             {/* Theme Switcher Dropdown */}
-            <div className="relative group/theme hidden sm:flex">
+            <div className="relative group/theme hidden lg:flex">
               <Button
                 variant="outline"
                 size="icon"
@@ -262,7 +268,7 @@ const Header = ({
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => query && results.length && setOpen(true)}
-                  className="w-72 pl-12 pr-10 py-5 bg-background/50 backdrop-blur-sm border-border/80 focus-visible:ring-primary rounded-full shadow-sm transition-all duration-300 group-hover:shadow-elegant-light font-sans text-sm"
+                  className="w-48 xl:w-72 pl-12 pr-10 py-5 bg-background/50 backdrop-blur-sm border-border/80 focus-visible:ring-primary rounded-full shadow-sm transition-all duration-300 group-hover:shadow-elegant-light font-sans text-sm"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors" />
                 
@@ -441,7 +447,7 @@ const Header = ({
                       href="/"
                       className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
                     >
-                      Home
+                      {t("home")}
                     </Link>
                     <Link
                       href="/about"
@@ -453,24 +459,29 @@ const Header = ({
                       href="/products"
                       className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
                     >
-                      Products
+                      {t("products")}
                     </Link>
                     <Link
                       href="/blog"
                       className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
                     >
-                      BLOG
+                      Blog
                     </Link>
                     <Link
                       href="/orders"
                       className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
                     >
-                      Orders
+                      {t("orders")}
                     </Link>
                   </nav>
 
                   <Separator />
                   
+                  {/* Language Switcher */}
+                  <div className="px-2 my-2">
+                    <LanguageSwitcher />
+                  </div>
+
                   {/* Mobile Theme Switcher */}
                   <div className="grid gap-2 font-sans">
                     <h4 className="px-2 text-sm font-medium text-muted-foreground uppercase tracking-wider">

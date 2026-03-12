@@ -1,0 +1,28 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "search": "Search",
+    "categories": "Categories",
+    "products": "Products",
+    "cart": "Cart",
+    "orders": "Orders",
+    "profile": "Profile"
+  },
+  "Common": {
+    "addToCart": "Add to Cart",
+    "freeShipping": "Free Shipping 🌍",
+    "checkout": "Checkout",
+    "deliveryEstimate": "Delivery: 7–14 days"
+  },
+  "Checkout": {
+    "shippingInfoTitle": "Free Shipping",
+    "shippingInfoDesc": "No additional delivery fees"
+  },
+  "Home": {
+    "categoriesTitle": "Explore Authenticity",
+    "productsTitle": "Curated Masterpieces"
+  },
+  "Cart": {
+    "title": "Shopping Cart"
+  }
+}

@@ -3,8 +3,10 @@ import { getProducts } from "@/actions/product.actions";
 import Category from "@/components/shared/category";
 import Products from "@/components/shared/products";
 import { HeroCarousel } from "@/components/hero-carousel";
+import { getTranslations } from "next-intl/server";
 
 export default async function Home() {
+  const t = await getTranslations("Home");
   const category = await getCategories();
   const products = await getProducts();
 
@@ -56,7 +58,7 @@ export default async function Home() {
               id="categories-heading"
               className="text-3xl sm:text-4xl font-serif font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide"
             >
-              Explore Authenticity
+              {t("categoriesTitle")}
             </h2>
             <div className="h-px bg-border flex-1 ml-6 hidden sm:block"></div>
           </div>
@@ -74,7 +76,7 @@ export default async function Home() {
               id="products-heading"
               className="text-3xl sm:text-4xl font-serif font-bold bg-gradient-primary bg-clip-text text-transparent tracking-wide"
             >
-              Curated Masterpieces
+              {t("productsTitle")}
             </h2>
             <div className="h-px bg-border flex-1 ml-6 hidden sm:block"></div>
           </div>

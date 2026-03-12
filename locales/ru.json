@@ -1,0 +1,28 @@
+{
+  "Navigation": {
+    "home": "Главная",
+    "search": "Поиск",
+    "categories": "Категории",
+    "products": "Товары",
+    "cart": "Корзина",
+    "orders": "Заказы",
+    "profile": "Профиль"
+  },
+  "Common": {
+    "addToCart": "В корзину",
+    "freeShipping": "Бесплатная доставка 🌍",
+    "checkout": "Оформить заказ",
+    "deliveryEstimate": "Доставка: 7–14 дней"
+  },
+  "Checkout": {
+    "shippingInfoTitle": "Бесплатная доставка",
+    "shippingInfoDesc": "Никаких дополнительных сборов"
+  },
+  "Home": {
+    "categoriesTitle": "Исследуйте подлинность",
+    "productsTitle": "Кураторские шедевры"
+  },
+  "Cart": {
+    "title": "Корзина покупок"
+  }
+}

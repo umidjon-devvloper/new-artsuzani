@@ -4,8 +4,10 @@ import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import CheckoutForm from "./checkout-form";
+import { getTranslations } from "next-intl/server";
 
 export default async function CheckoutPage() {
+  const t = await getTranslations("Checkout");
   const { userId } = await auth();
   const cookieStore = await cookies();
   const guestId = cookieStore.get("guestId")?.value;
@@ -77,7 +79,7 @@ export default async function CheckoutPage() {
             </div>
             <div className="flex justify-between text-muted-foreground text-sm">
               <span>Shipping</span>
-              <span>Calculated at checkout</span>
+              <span className="text-[#8C6239] font-medium">{t("shippingInfoTitle")}</span>
             </div>
             <div className="flex justify-between items-center text-lg font-bold text-foreground pt-4 border-t border-border">
               <span>Total</span>
@@ -85,6 +87,15 @@ export default async function CheckoutPage() {
                 ${total.toFixed(2)}
               </span>
             </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-[#F5ECD5]/40 rounded-xl border border-[#E8DCC4]">
+            <div className="flex items-center gap-2 text-[#8C6239] font-semibold text-sm mb-1">
+              <span>🌍</span> {t("shippingInfoTitle")}
+            </div>
+            <p className="text-xs text-gray-600">
+              {t("shippingInfoDesc")}
+            </p>
           </div>
         </div>
       </div>

@@ -5,8 +5,9 @@ import * as React from "react";
 import { Button } from "../ui/button";
 import { SignInButton, useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 type Category = {
   _id?: string;
@@ -55,6 +56,8 @@ export default function ProductDetail({
   onToggleFavorite: (productId: string) => Promise<void>;
   AddCart: (productId: string) => Promise<void>; // вњ… Promise
 }) {
+  const t = useTranslations("Common");
+
   // вњ… Xavfsiz, moslashuvchan ekstraksiya
   const images = extractImages(product?.images);
   const [idx, setIdx] = React.useState(0);
@@ -204,20 +207,31 @@ export default function ProductDetail({
             </Button>
           </div>
 
-          <div className="flex items-center gap-4 pt-2">
-            <div className="text-3xl font-bold font-serif text-[var(--price-color)]">
-              {formatPrice(product?.price, currency)}
+          <div className="flex flex-col gap-4 pt-2">
+            <div className="flex items-center gap-4">
+              <div className="text-3xl font-bold font-serif text-[var(--price-color)]">
+                {formatPrice(product?.price, currency)}
+              </div>
+              {isNew && (
+                <span className="rounded-full bg-[var(--theme-accent)]/10 px-3 py-1 text-xs font-semibold tracking-wide text-[var(--theme-accent)] border border-[var(--theme-accent)]/20">
+                  New Arrival
+                </span>
+              )}
+              {itemNo && (
+                <span className="rounded-full bg-[var(--card-bg)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)] border border-[var(--border-theme)]">
+                  Ref: {itemNo}
+                </span>
+              )}
             </div>
-            {isNew && (
-              <span className="rounded-full bg-[var(--theme-accent)]/10 px-3 py-1 text-xs font-semibold tracking-wide text-[var(--theme-accent)] border border-[var(--theme-accent)]/20">
-                New Arrival
-              </span>
-            )}
-            {itemNo && (
-              <span className="rounded-full bg-[var(--card-bg)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)] border border-[var(--border-theme)]">
-                Ref: {itemNo}
-              </span>
-            )}
+
+            <div className="flex flex-col gap-1 p-3 bg-[#F5ECD5]/40 rounded-xl border border-[#E8DCC4] max-w-sm mt-2">
+               <div className="flex items-center gap-2 text-sm font-semibold text-[#8C6239]">
+                 {t("freeShipping")}
+               </div>
+               <div className="text-xs font-medium text-gray-600 pl-6">
+                 {t("deliveryEstimate")}
+               </div>
+            </div>
           </div>
         </div>
 
@@ -272,7 +286,7 @@ export default function ProductDetail({
               }}
               className="w-full text-base h-14 rounded-full border-2 border-[var(--theme-accent)] text-[var(--theme-accent)] bg-[var(--card-bg)] hover:bg-[var(--theme-accent)]/10 transition-colors shadow-none font-semibold tracking-wide"
             >
-              {adding ? "Adding..." : "Add to Cart"}
+              {adding ? "..." : t("addToCart")}
             </Button>
             
             <Button

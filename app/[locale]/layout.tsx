@@ -4,7 +4,11 @@ import Whatsapp from "@/components/shared/whatsapp";
 import { Toaster } from "react-hot-toast";
 import NextTopLoader from "nextjs-toploader";
 import { Cinzel, Montserrat } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -53,14 +57,34 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LocaleLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function LocaleLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
+  const {
+    children
+  } = props;
+
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <meta name="google-site-verification" content="mYl6TcJAb1dNHwCa1VFTFD0kKZS9L8dpQOO8VjzRON0" />
         <link
           rel="icon"
@@ -76,22 +100,24 @@ export default async function LocaleLayout({
           href="/logo.png"
         />
         <body className={`${montserrat.className} ${cinzel.variable} ${montserrat.variable} antialiased`} suppressHydrationWarning>
-          <NextTopLoader
-            color="#3182CE"
-            initialPosition={0.5}
-            crawlSpeed={200}
-            height={2}
-            crawl={true}
-            showSpinner={false}
-            easing="ease"
-            speed={200}
-            shadow="0 0 10px #3182CE,0 0 5px #3182CE"
-          />
-          {children}
-          <Toaster />
-          <div className="relative z-50">
-            <Whatsapp />
-          </div>
+          <NextIntlClientProvider messages={messages}>
+            <NextTopLoader
+              color="#3182CE"
+              initialPosition={0.5}
+              crawlSpeed={200}
+              height={2}
+              crawl={true}
+              showSpinner={false}
+              easing="ease"
+              speed={200}
+              shadow="0 0 10px #3182CE,0 0 5px #3182CE"
+            />
+            {children}
+            <Toaster />
+            <div className="relative z-50">
+              <Whatsapp />
+            </div>
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>

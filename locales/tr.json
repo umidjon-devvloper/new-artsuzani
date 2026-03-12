@@ -1,0 +1,28 @@
+{
+  "Navigation": {
+    "home": "Ana Sayfa",
+    "search": "Arama",
+    "categories": "Kategoriler",
+    "products": "Ürünler",
+    "cart": "Sepet",
+    "orders": "Siparişler",
+    "profile": "Profil"
+  },
+  "Common": {
+    "addToCart": "Sepete Ekle",
+    "freeShipping": "Ücretsiz Kargo 🌍",
+    "checkout": "Ödeme Yap",
+    "deliveryEstimate": "Teslimat: 7–14 gün"
+  },
+  "Checkout": {
+    "shippingInfoTitle": "Ücretsiz Kargo",
+    "shippingInfoDesc": "Ek teslimat ücreti yok"
+  },
+  "Home": {
+    "categoriesTitle": "Özgünlüğü Keşfet",
+    "productsTitle": "Küratörlü Başyapıtlar"
+  },
+  "Cart": {
+    "title": "Alışveriş Sepeti"
+  }
+}

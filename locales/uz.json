@@ -1,0 +1,28 @@
+{
+  "Navigation": {
+    "home": "Asosiy",
+    "search": "Qidiruv",
+    "categories": "Kategoriyalar",
+    "products": "Mahsulotlar",
+    "cart": "Savatcha",
+    "orders": "Buyurtmalar",
+    "profile": "Profil"
+  },
+  "Common": {
+    "addToCart": "Savatchaga qo'shish",
+    "freeShipping": "Yetkazib berish bepul 🌍",
+    "checkout": "Xarid qilish",
+    "deliveryEstimate": "Yetkazib berish: 7–14 kun"
+  },
+  "Checkout": {
+    "shippingInfoTitle": "Yetkazib berish bepul",
+    "shippingInfoDesc": "Saytda hech qanday qo'shimcha to'lov yo'q"
+  },
+  "Home": {
+    "categoriesTitle": "Haqiqiy san'atni kashf eting",
+    "productsTitle": "Tanlangan asarlar"
+  },
+  "Cart": {
+    "title": "Savatcha"
+  }
+}

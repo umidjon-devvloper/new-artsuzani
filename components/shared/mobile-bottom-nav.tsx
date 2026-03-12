@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Home, Search, Grid, ShoppingCart, Package, User, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
@@ -14,6 +14,7 @@ interface MobileBottomNavProps {
 
 const MobileBottomNav = ({ cartLength, pendingOrderCount = 0 }: MobileBottomNavProps) => {
   const pathname = usePathname();
+  const t = useTranslations("Navigation");
   const { isLoaded, isSignedIn } = useUser();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -40,39 +41,39 @@ const MobileBottomNav = ({ cartLength, pendingOrderCount = 0 }: MobileBottomNavP
 
   const navItems = [
     {
-      label: "Home",
+      label: t("home"),
       icon: Home,
       href: "/",
       matchExact: true,
     },
     {
-      label: "Products",
+      label: t("products"),
       icon: Search,
       href: "/products", // Assuming products is the main search/browse area
       matchExact: false,
     },
     {
-      label:"Favorites",
-      icon:Heart,
-      href:"/favorite",
-      matchExact:false,
+      label: "Favorites",
+      icon: Heart,
+      href: "/favorite",
+      matchExact: false,
     },
     {
-      label: "Cart",
+      label: t("cart"),
       icon: ShoppingCart,
       href: "/shopping/cart",
       badge: cartLength,
       matchExact: false,
     },
     {
-      label: "Orders",
+      label: t("orders"),
       icon: Package,
       href: "/orders",
       badge: pendingOrderCount,
       matchExact: false,
     },
     {
-      label: "Profile",
+      label: t("profile"),
       icon: User,
       href: isLoaded && isSignedIn ? "/profile" : "/", 
       matchExact: false,
