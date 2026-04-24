@@ -6,12 +6,20 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   /* config options here */
+  compress: true,
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 5,
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb", // default 1mb -> 10mb
     },
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -20,7 +28,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "**",
-      }
+      },
     ],
   },
 };

@@ -18,7 +18,7 @@ const slides = [
     alt: "Vintage Suzani embroidery detail",
     caption: "Vintage Suzani — handworked heritage",
   },
-{
+  {
     src: "https://0evi7lr5v8.ufs.sh/f/LN78d9BJu8Qki9XTfbyAmpNgbM2oFeT1E0tjuwd7x6vh8kRI",
     alt: "Bukhara bazaar with textiles",
     caption: "From the bazaars of Bukhara",
@@ -41,7 +41,7 @@ export function HeroCarousel({
       delay: autoplayMs,
       stopOnMouseEnter: true,
       stopOnInteraction: false,
-    })
+    }),
   );
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -51,7 +51,7 @@ export function HeroCarousel({
       duration: 24, // ms per px-ish (smooth)
       dragFree: false,
     },
-    [pluginRef.current]
+    [pluginRef.current],
   );
 
   const [index, setIndex] = React.useState(0);
@@ -78,15 +78,15 @@ export function HeroCarousel({
 
   const scrollPrev = React.useCallback(
     () => emblaApi?.scrollPrev(),
-    [emblaApi]
+    [emblaApi],
   );
   const scrollNext = React.useCallback(
     () => emblaApi?.scrollNext(),
-    [emblaApi]
+    [emblaApi],
   );
   const scrollTo = React.useCallback(
     (i: number) => emblaApi?.scrollTo(i),
-    [emblaApi]
+    [emblaApi],
   );
 
   return (
@@ -107,6 +107,7 @@ export function HeroCarousel({
             ease: "linear",
           }}
           className="h-full bg-white/70 dark:bg-white/80 backdrop-blur-[1px]"
+          style={{ transform: "translateZ(0)" }}
         />
       </div>
 
@@ -134,17 +135,17 @@ export function HeroCarousel({
                   />
 
                   {/* Darker gradient overlay at bottom for text contrast only */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
 
                   {/* Caption */}
                   <AnimatePresence mode="popLayout">
                     {s.caption && index === i && (
                       <motion.div
                         key={`cap-${i}`}
-                        initial={{ opacity: 0, y: 16 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 16 }}
-                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
                         className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 max-w-[92%] sm:max-w-[70%]"
                       >
                         <span className="inline-flex items-center gap-2 rounded-full bg-white/15 dark:bg-black/25 backdrop-blur-md px-4 py-2 text-sm sm:text-base font-medium text-white shadow-lg ring-1 ring-white/30">
@@ -167,7 +168,7 @@ export function HeroCarousel({
           className={cn(
             "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-11 w-11 sm:h-12 sm:w-12 rounded-full z-30",
             "bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50",
-            "border border-border/60 shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+            "border border-border/60 shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80",
           )}
         >
           <span className="sr-only">Previous</span>
@@ -187,7 +188,7 @@ export function HeroCarousel({
           className={cn(
             "absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-11 w-11 sm:h-12 sm:w-12 rounded-full z-30",
             "bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50",
-            "border border-border/60 shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+            "border border-border/60 shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80",
           )}
         >
           <span className="sr-only">Next</span>
@@ -213,7 +214,7 @@ export function HeroCarousel({
               onClick={() => scrollTo(i)}
               className={cn(
                 "h-2.5 w-2.5 rounded-full transition-all",
-                active ? "w-6 bg-white/90" : "bg-white/50 hover:bg-white/80"
+                active ? "w-6 bg-white/90" : "bg-white/50 hover:bg-white/80",
               )}
             />
           );

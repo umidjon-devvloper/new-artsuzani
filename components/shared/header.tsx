@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Search, ShoppingCart, Heart, Menu, LogIn, Palette, X, Paintbrush } from "lucide-react";
+import {
+  Search,
+  ShoppingCart,
+  Heart,
+  Menu,
+  LogIn,
+  Palette,
+  X,
+  Paintbrush,
+} from "lucide-react";
 import UserBox from "@/components/shared/user-box";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,10 +31,26 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const BUHARA_THEMES = [
-  { id: "theme-bukhara", name: "Bukhara Luxury", colors: ["bg-[#b32230]", "bg-[#dec576]", "bg-[#f5ebd6]"] },
-  { id: "theme-silkroad", name: "Silk Road", colors: ["bg-[#1f9468]", "bg-[#dec576]", "bg-[#fcfdfc]"] },
-  { id: "theme-minimal", name: "Modern Minimal", colors: ["bg-[#414b5c]", "bg-[#d4c8b8]", "bg-[#fbfaf8]"] },
-  { id: "theme-heritage", name: "Dark Heritage", colors: ["bg-[#b32230]", "bg-[#183c2f]", "bg-[#25191a]"] },
+  {
+    id: "theme-bukhara",
+    name: "Bukhara Luxury",
+    colors: ["bg-[#b32230]", "bg-[#dec576]", "bg-[#f5ebd6]"],
+  },
+  {
+    id: "theme-silkroad",
+    name: "Silk Road",
+    colors: ["bg-[#1f9468]", "bg-[#dec576]", "bg-[#fcfdfc]"],
+  },
+  {
+    id: "theme-minimal",
+    name: "Modern Minimal",
+    colors: ["bg-[#414b5c]", "bg-[#d4c8b8]", "bg-[#fbfaf8]"],
+  },
+  {
+    id: "theme-heritage",
+    name: "Dark Heritage",
+    colors: ["bg-[#b32230]", "bg-[#183c2f]", "bg-[#25191a]"],
+  },
 ];
 
 const Header = ({
@@ -53,7 +78,10 @@ const Header = ({
     const idx = BUHARA_THEMES.findIndex((t) => t.id === saved);
     if (idx !== -1) {
       setThemeIdx(idx);
-      document.body.className = document.body.className.replace(/theme-[a-z]+/, "");
+      document.body.className = document.body.className.replace(
+        /theme-[a-z]+/,
+        "",
+      );
       document.body.classList.add(saved);
     } else {
       document.body.classList.add("theme-bukhara");
@@ -63,7 +91,7 @@ const Header = ({
   const changeTheme = (idx: number) => {
     setThemeIdx(idx);
     const themeId = BUHARA_THEMES[idx].id;
-    
+
     // Remove old themes
     BUHARA_THEMES.forEach((t) => document.body.classList.remove(t.id));
     // Add new theme
@@ -100,7 +128,7 @@ const Header = ({
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 200);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -152,7 +180,7 @@ const Header = ({
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border shadow-soft transition-all duration-500">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto ">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href={"/"} className="flex items-center space-x-2 group">
@@ -183,6 +211,13 @@ const Header = ({
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
             </Link>
             <Link
+              href="/marketplays"
+              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
+            >
+              Marketplays
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+            </Link>
+            <Link
               href="/blog"
               className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
             >
@@ -199,7 +234,10 @@ const Header = ({
           </nav>
 
           {/* Right */}
-          <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapRef}>
+          <div
+            className="flex items-center space-x-3 sm:space-x-5"
+            ref={wrapRef}
+          >
             <div className="hidden lg:flex">
               <LanguageSwitcher />
             </div>
@@ -217,7 +255,7 @@ const Header = ({
               >
                 <Paintbrush className="w-4 h-4 text-primary group-hover/theme:scale-110 transition-transform" />
               </Button>
-              <div 
+              <div
                 id="theme-dropdown"
                 className="hidden absolute top-full right-0 mt-3 w-56 p-2 rounded-2xl shadow-elegant-light border border-border/60 bg-background/95 backdrop-blur-xl z-[60] animate-in fade-in slide-in-from-top-4 duration-300"
               >
@@ -232,11 +270,15 @@ const Header = ({
                       key={theme.id}
                       onClick={() => {
                         changeTheme(i);
-                        document.getElementById("theme-dropdown")?.classList.add("hidden");
+                        document
+                          .getElementById("theme-dropdown")
+                          ?.classList.add("hidden");
                       }}
                       className={cn(
                         "flex items-center gap-3 w-full p-2 rounded-xl text-left transition-all duration-300 hover:bg-muted/50",
-                        themeIdx === i ? "bg-primary/5 text-primary" : "text-foreground"
+                        themeIdx === i
+                          ? "bg-primary/5 text-primary"
+                          : "text-foreground",
                       )}
                     >
                       <div className="flex -space-x-1">
@@ -245,7 +287,7 @@ const Header = ({
                             key={idx}
                             className={cn(
                               "w-4 h-4 rounded-full border border-border/50 shadow-sm",
-                              color
+                              color,
                             )}
                           />
                         ))}
@@ -268,14 +310,17 @@ const Header = ({
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => query && results.length && setOpen(true)}
-                  className="w-48 xl:w-72 pl-12 pr-10 py-5 bg-background/50 backdrop-blur-sm border-border/80 focus-visible:ring-primary rounded-full shadow-sm transition-all duration-300 group-hover:shadow-elegant-light font-sans text-sm"
+                  className="w-32 xl:w-60 pl-12 pr-10 py-5 bg-background/50 backdrop-blur-sm border-border/80 focus-visible:ring-primary rounded-full shadow-sm transition-all duration-300 group-hover:shadow-elegant-light font-sans text-sm"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors" />
-                
+
                 {/* Clear button */}
                 {query && (
-                  <button 
-                    onClick={() => { setQuery(""); setOpen(false); }} 
+                  <button
+                    onClick={() => {
+                      setQuery("");
+                      setOpen(false);
+                    }}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
                     title="Clear search"
                   >
@@ -301,10 +346,17 @@ const Header = ({
                   {!loading &&
                     results.map((item: any) => {
                       // Highlight matching substring
-                      const indexMatch = item.title.toLowerCase().indexOf(query.toLowerCase());
+                      const indexMatch = item.title
+                        .toLowerCase()
+                        .indexOf(query.toLowerCase());
                       const beforeMatch = item.title.substring(0, indexMatch);
-                      const matchText = item.title.substring(indexMatch, indexMatch + query.length);
-                      const afterMatch = item.title.substring(indexMatch + query.length);
+                      const matchText = item.title.substring(
+                        indexMatch,
+                        indexMatch + query.length,
+                      );
+                      const afterMatch = item.title.substring(
+                        indexMatch + query.length,
+                      );
 
                       return (
                         <Link
@@ -315,15 +367,23 @@ const Header = ({
                         >
                           {/* Image preview or fallback icon */}
                           {item.images?.[0] ? (
-                            <img src={item.images[0]} alt={item.title} className="w-12 h-12 object-cover rounded-md shadow-sm" />
+                            <img
+                              src={item.images[0]}
+                              alt={item.title}
+                              className="w-12 h-12 object-cover rounded-md shadow-sm"
+                            />
                           ) : (
-                            <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center text-xl shadow-sm">🪡</div>
+                            <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center text-xl shadow-sm">
+                              🪡
+                            </div>
                           )}
                           <div className="flex-1 font-sans text-sm font-medium text-foreground line-clamp-2">
                             {indexMatch >= 0 ? (
                               <>
                                 {beforeMatch}
-                                <span className="bg-primary/20 text-primary font-bold px-0.5 rounded-sm">{matchText}</span>
+                                <span className="bg-primary/20 text-primary font-bold px-0.5 rounded-sm">
+                                  {matchText}
+                                </span>
                                 {afterMatch}
                               </>
                             ) : (
@@ -361,7 +421,10 @@ const Header = ({
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal">
-                <Button size="lg" className="hidden border-border bg-white text-foreground hover:bg-gray-50 hover:text-primary rounded-full md:flex shadow-sm transition-all duration-300">
+                <Button
+                  size="lg"
+                  className="hidden border-border bg-white text-foreground hover:bg-gray-50 hover:text-primary rounded-full md:flex shadow-sm transition-all duration-300"
+                >
                   Login
                 </Button>
               </SignInButton>
@@ -476,7 +539,7 @@ const Header = ({
                   </nav>
 
                   <Separator />
-                  
+
                   {/* Language Switcher */}
                   <div className="px-2 my-2">
                     <LanguageSwitcher />
@@ -494,7 +557,9 @@ const Header = ({
                           onClick={() => changeTheme(i)}
                           className={cn(
                             "flex flex-col items-center justify-center p-3 rounded-xl border border-border/50 transition-all duration-300",
-                            themeIdx === i ? "bg-primary/10 border-primary/50" : "bg-muted/30 hover:bg-muted"
+                            themeIdx === i
+                              ? "bg-primary/10 border-primary/50"
+                              : "bg-muted/30 hover:bg-muted",
                           )}
                         >
                           <div className="flex -space-x-1 mb-2">
@@ -503,15 +568,19 @@ const Header = ({
                                 key={idx}
                                 className={cn(
                                   "w-3 h-3 rounded-full border border-border/50",
-                                  color
+                                  color,
                                 )}
                               />
                             ))}
                           </div>
-                          <span className={cn(
-                            "text-xs font-medium text-center leading-tight",
-                            themeIdx === i ? "text-primary" : "text-foreground"
-                          )}>
+                          <span
+                            className={cn(
+                              "text-xs font-medium text-center leading-tight",
+                              themeIdx === i
+                                ? "text-primary"
+                                : "text-foreground",
+                            )}
+                          >
                             {theme.name}
                           </span>
                         </button>
