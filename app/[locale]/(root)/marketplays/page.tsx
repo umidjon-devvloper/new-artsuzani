@@ -400,7 +400,7 @@ const ProductCard = ({
     <div className="mp-card-img-wrap">
       <img src={item.image} alt={item.title} />
       <div className="mp-card-overlay">
-        <span>Ko'rish →</span>
+        <span>Ko&apos;rish →</span>
       </div>
     </div>
     <div className="mp-card-body">
