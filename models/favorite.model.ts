@@ -1,9 +1,9 @@
-﻿import mongoose, { Schema, models, model } from "mongoose";
+﻿import { Schema, models, model } from "mongoose";
 
 const FavoriteSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    productId: { type: Schema.Types.ObjectId, ref: "Product" }, // вќ— ref aynan "Product"
+    productId: { type: Schema.Types.ObjectId, ref: "Product" }, // ❗ ref aynan "Product"
   },
   { timestamps: true }
 );

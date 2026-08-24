@@ -37,7 +37,7 @@ Total: $${order.total.toFixed(2)}
 Please send me the payment instructions!`;
 
     const encodedText = encodeURIComponent(text);
-    return `https://api.whatsapp.com/send/?phone=998917767714&text&type=phone_number&app_absent=0`;
+    return `https://api.whatsapp.com/send/?phone=998917767714&text=${encodedText}&type=phone_number&app_absent=0`;
   };
 
   return (
@@ -45,7 +45,7 @@ Please send me the payment instructions!`;
       {orders.map((order) => (
         <div
           key={order._id}
-          className="bg-white border border-border/60 rounded-2xl shadow-sm hover:shadow-elegant-light transition-shadow overflow-hidden"
+          className="bg-card border border-border/60 rounded-2xl shadow-sm hover:shadow-elegant-light transition-shadow overflow-hidden"
         >
           {/* Header */}
           <div className="bg-gray-50 border-b border-border/60 p-4 md:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

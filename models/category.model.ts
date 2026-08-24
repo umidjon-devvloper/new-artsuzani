@@ -9,6 +9,6 @@ const CategorySchema = new Schema(
   { timestamps: true }
 );
 
-// collision boвЂlsa qaytadan compile qilmaydi
+// collision bo‘lsa qaytadan compile qilmaydi
 export default mongoose.models.Category ||
   mongoose.model("Category", CategorySchema);

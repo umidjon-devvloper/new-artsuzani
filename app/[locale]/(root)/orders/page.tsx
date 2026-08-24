@@ -3,7 +3,7 @@ import { getOrdersByUserId, getGuestOrders } from "@/actions/orders.actions";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import OrderListClient from "./order-list-client";
 
 export default async function OrdersPage() {
@@ -58,7 +58,7 @@ export default async function OrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center bg-white border border-border/60 rounded-2xl shadow-soft p-12">
+        <div className="text-center bg-card border border-border/60 rounded-2xl shadow-soft p-12">
           <div className="mx-auto w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
             <span className="text-4xl">🛍️</span>
           </div>

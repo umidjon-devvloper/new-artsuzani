@@ -20,7 +20,7 @@ const useUser = () => {
           const data = await getUser(userId!);
           setUser(data);
         }
-      } catch (error) {
+      } catch {
         setUser(null);
       }
     };

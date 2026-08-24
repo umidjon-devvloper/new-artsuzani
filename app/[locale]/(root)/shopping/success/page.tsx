@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 
 export default function CheckoutSuccessPage() {
@@ -25,7 +25,7 @@ export default function CheckoutSuccessPage() {
         Your order has been successfully placed and is now being processed. We will send you an email confirmation shortly with your shipping details.
       </p>
 
-      <div className="p-6 bg-white border border-border rounded-xl shadow-soft w-full md:w-3/4 mb-10">
+      <div className="p-6 bg-card border border-border rounded-xl shadow-soft w-full md:w-3/4 mb-10">
         <h3 className="text-xl font-serif font-bold text-foreground mb-2">
           What happens next?
         </h3>
@@ -41,7 +41,7 @@ export default function CheckoutSuccessPage() {
           </Button>
         </Link>
         <Link href="/">
-          <Button variant="outline" size="lg" className="rounded-full px-8 bg-white border-border text-foreground hover:bg-gray-50 focus:ring-ring font-medium text-base h-14 w-full sm:w-auto shadow-sm">
+          <Button variant="outline" size="lg" className="rounded-full px-8 bg-card border-border text-foreground hover:bg-muted focus:ring-ring font-medium text-base h-14 w-full sm:w-auto shadow-sm">
             Return to Homepage
           </Button>
         </Link>

@@ -26,7 +26,7 @@ export const getBlogById = async (id: string) => {
   return JSON.parse(JSON.stringify(doc));
 };
 
-// рџ”Ѕ YANGI: UPDATE
+// 🔽 YANGI: UPDATE
 export const updateBlog = async (
   id: string,
   payload: {
@@ -43,7 +43,7 @@ export const updateBlog = async (
   return JSON.parse(JSON.stringify(updated));
 };
 
-// рџ”Ѕ YANGI: DELETE
+// 🔽 YANGI: DELETE
 export const deleteBlog = async (id: string) => {
   await dbConnect();
   await Blog.findByIdAndDelete(id);

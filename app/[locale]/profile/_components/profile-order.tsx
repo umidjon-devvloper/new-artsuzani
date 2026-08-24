@@ -1,6 +1,6 @@
 ﻿"use client";
 import { UserProfile } from "@clerk/nextjs";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import React, { useState } from "react";
 
 type Product = {
@@ -49,8 +49,8 @@ const ProfileOrder = ({ orders }: { orders: Order[] }) => {
             onClick={() => setActiveTab("orders")}
             className={`px-4 py-2 rounded-lg ${
               activeTab === "orders"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-black"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
             }`}
           >
             Orders
@@ -59,8 +59,8 @@ const ProfileOrder = ({ orders }: { orders: Order[] }) => {
             onClick={() => setActiveTab("profile")}
             className={`px-4 py-2 rounded-lg ${
               activeTab === "profile"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-black"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
             }`}
           >
             User

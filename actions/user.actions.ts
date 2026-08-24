@@ -15,7 +15,7 @@ export async function createUser(data: ICreateUser) {
 
   const { clerkId, email, fullName, picture } = data;
 
-  // clerkId boвЂyicha idempotent upsert
+  // clerkId bo‘yicha idempotent upsert
   await userModel.findOneAndUpdate(
     { clerkId },
     { $set: { email, fullName, picture, clerkId } },
@@ -25,16 +25,14 @@ export async function createUser(data: ICreateUser) {
   //   return user;
 }
 export const getUser = async (clerkId: string) => {
-  try {
-    console.log("clerkId", clerkId);
+  try {
     await dbConnect();
     const user = await userModel
       .findOne({ clerkId })
       .select("fullName picture clerkId email role isAdmin");
-    if (!user) return "notFound";
-    console.log("user", user);
+    if (!user) return "notFound";
     return JSON.parse(JSON.stringify(user));
-  } catch (error) {
+  } catch {
     throw new Error("Error fetching user. Please try again.");
   }
 };
@@ -43,7 +41,7 @@ export const getRole = async (clerkId: string) => {
     await dbConnect();
     const user = await userModel.findOne({ clerkId }).select("role isAdmin");
     return user;
-  } catch (error) {
+  } catch {
     throw new Error("Error getting role");
   }
 };

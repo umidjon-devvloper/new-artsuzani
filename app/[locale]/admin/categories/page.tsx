@@ -10,6 +10,7 @@ import {
   type GetCategoriesResult,
   type CreateCategoryResult,
 } from "@/actions/category.actions";
+import { useUploadThing } from "@/lib/uploadthing";
 
 type Toast = { type: "success" | "error"; message: string };
 type Category = CategoryDTO;
@@ -24,7 +25,7 @@ const Categories: React.FC = () => {
   // Create fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [imageB64, setImageB64] = useState<string>("");
+  const [imageUrl, setImageB64] = useState<string>("");
 
   // Edit modal state
   const [editOpen, setEditOpen] = useState(false);
@@ -32,6 +33,7 @@ const Categories: React.FC = () => {
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editImageB64, setEditImageB64] = useState<string>("");
+  const { startUpload, isUploading } = useUploadThing("singleImage");
 
   const [toast, setToast] = useState<Toast | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -46,28 +48,33 @@ const Categories: React.FC = () => {
       } else {
         setToast({
           type: "error",
-          message: res.error || "Kategoriya yuklab boвЂlmadi",
+          message: res.error || "Kategoriya yuklab bo‘lmadi",
         });
       }
       setLoading(false);
     })();
   }, []);
 
-  // helpers: file -> base64
-  async function fileToB64(file: File | null): Promise<string> {
+  // helpers: fayl -> CDN URL (avval base64 ga o'girilib bazaga yozilardi)
+  async function uploadImage(file: File | null): Promise<string> {
     if (!file) return "";
-    const b64 = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-    return b64;
+    try {
+      const res = await startUpload([file]);
+      const url = res?.[0]?.serverData.url || "";
+      if (!url) setToast({ type: "error", message: "Rasm yuklanmadi" });
+      return url;
+    } catch (e: any) {
+      setToast({
+        type: "error",
+        message: e?.message || "Rasm yuklashda xatolik",
+      });
+      return "";
+    }
   }
 
   // CREATE
   async function onCreate(formData: FormData) {
-    formData.set("image", imageB64); // base64 yoki boвЂsh
+    formData.set("image", imageUrl); // base64 yoki bo‘sh
     startTransition(async () => {
       const res: CreateCategoryResult = await createCategories(formData);
       if (res.ok) {
@@ -86,18 +93,18 @@ const Categories: React.FC = () => {
 
   // DELETE
   async function onDelete(id: string) {
-    const yes = confirm("Rostdan oвЂchirmoqchimisiz?");
+    const yes = confirm("Rostdan o‘chirmoqchimisiz?");
     if (!yes) return;
 
     startTransition(async () => {
       const res = await deleteCategory(id);
       if (res.ok) {
         setCats((prev) => prev.filter((c) => c._id !== id));
-        setToast({ type: "success", message: "OвЂchirildi" });
+        setToast({ type: "success", message: "O‘chirildi" });
       } else {
         setToast({
           type: "error",
-          message: res.error || "OвЂchirishda xatolik",
+          message: res.error || "O‘chirishda xatolik",
         });
       }
     });
@@ -125,7 +132,7 @@ const Categories: React.FC = () => {
     if (!editing) return;
 
     const fd = new FormData(e.currentTarget);
-    fd.set("image", editImageB64); // base64 yoki boвЂsh
+    fd.set("image", editImageB64); // base64 yoki bo‘sh
 
     startTransition(async () => {
       const res = await updateCategory(editing._id, fd);
@@ -219,15 +226,20 @@ const Categories: React.FC = () => {
                   type="file"
                   accept="image/*"
                   onChange={async (e) =>
-                    setImageB64(await fileToB64(e.target.files?.[0] || null))
+                    setImageB64(await uploadImage(e.target.files?.[0] || null))
                   }
                   className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10"
                 />
+                {isUploading && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Rasm yuklanmoqda…
+                  </p>
+                )}
 
-                {imageB64 && (
+                {imageUrl && (
                   <div className="mt-3">
                     <img
-                      src={imageB64}
+                      src={imageUrl}
                       alt="preview"
                       className="h-28 rounded-xl border object-cover"
                     />
@@ -255,7 +267,7 @@ const Categories: React.FC = () => {
             <div className="mt-4 text-sm text-gray-500">Yuklanmoqda...</div>
           ) : cats.length === 0 ? (
             <div className="mt-4 text-sm text-gray-500">
-              Hozircha kategoriya yoвЂq.
+              Hozircha kategoriya yo‘q.
             </div>
           ) : (
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -360,11 +372,16 @@ const Categories: React.FC = () => {
                     accept="image/*"
                     onChange={async (e) =>
                       setEditImageB64(
-                        await fileToB64(e.target.files?.[0] || null)
+                        await uploadImage(e.target.files?.[0] || null)
                       )
                     }
                     className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10"
                   />
+                  {isUploading && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Rasm yuklanmoqda…
+                    </p>
+                  )}
 
                   {editImageB64 && (
                     <div className="mt-3">
@@ -399,8 +416,8 @@ const Categories: React.FC = () => {
         )}
 
         <p className="mt-10 text-xs text-gray-500">
-          * Rasm <b>base64</b> koвЂrinishda saqlanadi. Katta hajmli fayllar
-          uchun S3/GCS kabi storage ishlatish maвЂ™qul.
+          * Rasm <b>base64</b> ko‘rinishda saqlanadi. Katta hajmli fayllar
+          uchun S3/GCS kabi storage ishlatish ma’qul.
         </p>
       </div>
     </div>

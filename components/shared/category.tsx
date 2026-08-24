@@ -2,8 +2,7 @@
 
 import type * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
 export type CategoryItem = {
@@ -26,30 +25,22 @@ const DEFAULT_ITEMS: CategoryItem[] = [
   {
     title: "Home Decor",
     description: "Suzani & wall panels",
-    image:
-      "https://apt68kvda7.ufs.sh/f/Azjyu7p3LN7D1mEXEEqDNLfbkoWclsrg5zOtdG371xFu4PMU",
-    href: "/product-category/home-decor",
+    image: "/categories/home-decor.webp",
   },
   {
     title: "Caftans & Wear",
     description: "Traditional robes",
-    image:
-      "https://apt68kvda7.ufs.sh/f/Azjyu7p3LN7Da8YcoB41I9KXpFtkqhrg2YoBGN3OQsi4vwSZ",
-    href: "/product-category/caftans",
+    image: "/categories/caftans.webp",
   },
   {
     title: "Fabrics & Textiles",
     description: "Handwoven & embroidered",
-    image:
-      "https://apt68kvda7.ufs.sh/f/Azjyu7p3LN7DSVlkIP3P8I9XpQAuWlMfoVehT4YZNdzFmREw",
-    href: "/product-category/fabrics",
+    image: "/categories/fabrics.webp",
   },
   {
     title: "Accessories",
     description: "Bags, cushions & more",
-    image:
-      "https://apt68kvda7.ufs.sh/f/Azjyu7p3LN7D7LwZOUvSjqBbRzaTsemdMnK6WDcwtFXZlo9A",
-    href: "/product-category/accessories",
+    image: "/categories/accessories.webp",
   },
 ];
 
@@ -125,7 +116,10 @@ const LazyCardImage = ({
 };
 
 export default function Category({ category, className }: CategoryProps) {
-  const items = (category?.length ? category : DEFAULT_ITEMS) as CategoryItem[];
+  const items = (category?.length ? category : DEFAULT_ITEMS).map((item) => ({
+    ...item,
+    href: item.href ?? (item._id ? `/product-category/${item._id}` : undefined),
+  })) as CategoryItem[];
 
   return (
     <div className={cn("w-full", className)}>
@@ -143,8 +137,10 @@ export default function Category({ category, className }: CategoryProps) {
               {/* Image */}
               <LazyCardImage src={item.image ?? ""} alt={item.title} />
 
-              {/* Subtle bottom fade only */}
-              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none rounded-b-2xl" />
+              {/* Pastki qorayish — oq matn har qanday (och) rasm ustida ham
+                  o'qilishi uchun kuchli gradient. Avval from-black/50 edi va
+                  och rangli rasmlarda matn ko'rinmay qolardi. */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent z-10 pointer-events-none rounded-2xl" />
 
               {/* Accent glow border on hover */}
               <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[var(--theme-accent)]/80 transition-all duration-300 z-20 pointer-events-none" />
@@ -171,7 +167,7 @@ export default function Category({ category, className }: CategoryProps) {
                   {item.title}
                 </h3>
                 {item.description && (
-                  <p className="font-body text-white/60 text-xs tracking-[0.18em] uppercase mb-4">
+                  <p className="font-body text-white/80 text-xs tracking-[0.18em] uppercase mb-4 drop-shadow-sm">
                     {item.description}
                   </p>
                 )}

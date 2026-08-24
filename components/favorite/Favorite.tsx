@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 type Product = {
   _id?: string;
@@ -21,7 +22,7 @@ function extractImages(raw?: any[]): string[] {
 }
 
 function formatPrice(value?: number, currency = "USD") {
-  if (typeof value !== "number") return "вЂ”";
+  if (typeof value !== "number") return "—";
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -38,14 +39,12 @@ export default function FavoriteProducts({
   products: Product[];
 }) {
   if (!products || products.length === 0) {
-    // рџ”Ґ Chiroyli empty state
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-neutral-900/40 p-12 text-center">
-        {/* Icon */}
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
+      <div className="mx-auto flex max-w-2xl flex-col items-center justify-center rounded-2xl border border-border/60 bg-card p-12 text-center shadow-soft">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
           <svg
             viewBox="0 0 24 24"
-            className="h-7 w-7 text-red-500"
+            className="h-7 w-7 text-primary"
             fill="currentColor"
             aria-hidden="true"
           >
@@ -53,29 +52,29 @@ export default function FavoriteProducts({
           </svg>
         </div>
 
-        {/* Title */}
-        <h2 className="text-xl font-semibold text-white">No favorites yet</h2>
+        <h2 className="font-serif text-2xl font-medium text-foreground">
+          Hozircha saqlangan mahsulot yo&apos;q
+        </h2>
 
-        {/* Description */}
-        <p className="mt-2 max-w-md text-sm text-white/70">
-          Tap ❤️ on the products you like to save them. They will appear here
-          and won’t disappear even if you refresh the page.
+        <p className="mt-3 max-w-md text-sm text-muted-foreground">
+          Yoqqan mahsulotlarga ❤️ bosing — ular shu yerda saqlanadi va sahifani
+          yangilasangiz ham yo&apos;qolmaydi.
         </p>
 
-        {/* Link button */}
-        <Link
-          href="/products"
-          className="mt-6 inline-flex items-center rounded-xl bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
-        >
-          Back to catalog
+        <Link href="/products" className="mt-8">
+          <Button
+            size="lg"
+            className="rounded-full border-none bg-gradient-primary px-8 text-white shadow-elegant hover:opacity-90"
+          >
+            To&apos;plamga qaytish
+          </Button>
         </Link>
       </div>
     );
   }
 
-  // рџ”І Grid koвЂrinish
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mx-auto grid max-w-8xl grid-cols-1 gap-6 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-8">
       {products.map((p) => {
         const imgs = extractImages(p.images);
         const cover = imgs[0];
@@ -84,34 +83,36 @@ export default function FavoriteProducts({
           <Link
             key={String(p._id)}
             href={`/products/${p._id}`}
-            className="group overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/40 transition hover:border-white/20 hover:shadow-lg hover:shadow-black/30"
+            className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-soft transition hover:-translate-y-1 hover:border-[var(--theme-accent)] hover:shadow-elegant-light"
           >
-            <div className="aspect-[4/3] w-full overflow-hidden bg-black/30">
+            {/* MUHIM: next/image fill uchun parent `relative` bo'lishi shart */}
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
               {cover ? (
                 <Image
                   src={cover}
                   alt={p.title || "Product"}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover transition group-hover:scale-[1.03]"
+                  className="object-cover transition duration-500 group-hover:scale-[1.03]"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-white/40">
-                  No image
+                <div className="flex h-full w-full items-center justify-center font-serif text-muted-foreground">
+                  Image unavailable
                 </div>
               )}
             </div>
-            <div className="p-4">
+
+            <div className="p-5">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="line-clamp-1 text-base font-semibold text-white">
+                <h3 className="line-clamp-1 font-serif text-lg font-bold text-foreground transition-colors group-hover:text-[var(--theme-accent)]">
                   {(p.title || "").trim() || "Untitled"}
                 </h3>
-                <span className="shrink-0 rounded-full bg-white/10 px-2 py-1 text-xs text-white/80">
+                <span className="shrink-0 font-serif text-base font-bold text-[var(--price-color)]">
                   {formatPrice(p.price)}
                 </span>
               </div>
               {p.description && (
-                <p className="mt-2 line-clamp-2 text-sm text-white/60">
+                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {p.description.replace(/\r\n/g, "\n").trim()}
                 </p>
               )}

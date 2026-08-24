@@ -1,6 +1,6 @@
 ﻿import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowLeft, Sparkles, Heart, Globe } from "lucide-react";
 
 export default async function AboutPage() {
@@ -12,7 +12,7 @@ export default async function AboutPage() {
           <Link href="/">
             <Button
               variant="ghost"
-              className="group hover:bg-purple-50 dark:hover:bg-purple-950/20"
+              className="group hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
               Back to Home
@@ -22,7 +22,7 @@ export default async function AboutPage() {
 
         {/* Hero Section */}
         <section className="mb-16 animate-in fade-in slide-in-from-top-8 duration-1000">
-          <Card className="relative overflow-hidden rounded-3xl border-none shadow-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-800 dark:from-purple-800 dark:via-pink-800 dark:to-purple-900">
+          <Card className="relative overflow-hidden rounded-3xl border-none shadow-2xl bg-gradient-to-br from-[#8B1E2D] via-[#5c1420] to-[#2b0a10]">
             <div className="absolute inset-0 opacity-20">
               <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-32 -translate-y-32" />
               <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl transform -translate-x-32 translate-y-32" />
@@ -44,14 +44,18 @@ export default async function AboutPage() {
             </CardContent>
           </Card>
         </section>
-        <div className=" mb-10 mx-auto">
+        <div className="mx-auto max-w-3xl mb-16">
           <img
-            src="/suzani.png"
+            src="/suzani.webp"
             alt="Suzani"
-            className="mb-10 rounded-md sm:h-[500px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="my-8 md:my-10 rounded-2xl w-full h-auto max-h-[520px] object-cover shadow-soft border border-border"
           />
-          <strong>From Madrasa to Cinema to Suzani Embroidery</strong>
-          <p className="">
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-6">
+            From Madrasa to Cinema to Suzani Embroidery
+          </h2>
+          <p className="mb-6 text-[var(--text-secondary)] leading-relaxed text-base md:text-lg">
             The vaulted room where Zarina Isomoa and her mother, Zaynab Murodova
             work used to be the cinema in Soviet times. It is a cool vaulted
             chamber, ideal for the blisteringly hot summers in Uzbekistan. It is
@@ -73,11 +77,13 @@ export default async function AboutPage() {
             painting and wood carving.
           </p>
           <img
-            src="/suzani-images.png"
+            src="/suzani-images.webp"
             alt="Suzani"
-            className="mb-10 rounded-md sm:h-[500px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="my-8 md:my-10 rounded-2xl w-full h-auto max-h-[520px] object-cover shadow-soft border border-border"
           />
-          <p>
+          <p className="mb-6 text-[var(--text-secondary)] leading-relaxed text-base md:text-lg">
             People from all over the world come to watch Isomoa explain the
             technique in her clear and emphatic voice. She wears a light-blue
             headscarf, light blue denim jacket, and trousers, while her mother
@@ -104,12 +110,14 @@ export default async function AboutPage() {
             region southwest of Uzbekistan’s capital–Tashkent.
           </p>
           <img
-            src="/suzani-images-1.png"
+            src="/suzani-images-1.webp"
             alt="Suzani"
-            className="mb-10 rounded-md sm:h-[500px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="my-8 md:my-10 rounded-2xl w-full h-auto max-h-[520px] object-cover shadow-soft border border-border"
           />
 
-          <p>
+          <p className="mb-6 text-[var(--text-secondary)] leading-relaxed text-base md:text-lg">
             The skill of Suzani is intimately tied to one of the many charming
             domestic rituals witnessed in Uzbek society. A girl makes her first
             Suzani hang in her natal home, but when she gets married, it is
@@ -136,11 +144,13 @@ export default async function AboutPage() {
             practices and culture.
           </p>
           <img
-            src="/suzani-image-2.png"
+            src="/suzani-image-2.webp"
             alt="Suzani"
-            className="mb-10 rounded-md sm:h-[500px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="my-8 md:my-10 rounded-2xl w-full h-auto max-h-[520px] object-cover shadow-soft border border-border"
           />
-          <p>
+          <p className="mb-6 text-[var(--text-secondary)] leading-relaxed text-base md:text-lg">
             Compartments, borders, and patterns are crisscrossed and interlaced,
             just like the motifs in the local architecture. However, overall,
             there is no figurative imagery since the emphasis is on the
@@ -162,11 +172,13 @@ export default async function AboutPage() {
             continues, where women can feel part of a community.
           </p>
           <img
-            src="/suzani-image-3.png"
+            src="/suzani-image-3.webp"
             alt="Suzani"
-            className="mb-10 rounded-md sm:h-[500px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            className="my-8 md:my-10 rounded-2xl w-full h-auto max-h-[520px] object-cover shadow-soft border border-border"
           />
-          <p>
+          <p className="mb-6 text-[var(--text-secondary)] leading-relaxed text-base md:text-lg">
             Resisting entering the family tradition, which has stood for
             generations, would be to rebel. While there is a skill that can be
             taught, talent must surely be required in some small measure. And
@@ -190,7 +202,7 @@ export default async function AboutPage() {
           <Card className="rounded-3xl border border-border/50 shadow-xl bg-gradient-to-br from-card to-card/80 animate-in fade-in slide-in-from-left-8 duration-1000 delay-300">
             <CardContent className="p-8 sm:p-10">
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mr-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center mr-4 shadow-sm">
                   <Globe className="h-6 w-6 text-white" />
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -226,7 +238,7 @@ export default async function AboutPage() {
           <Card className="rounded-3xl border border-border/50 shadow-xl bg-gradient-to-br from-card to-card/80 animate-in fade-in slide-in-from-right-8 duration-1000 delay-500">
             <CardContent className="p-8 sm:p-10">
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center mr-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center mr-4 shadow-sm">
                   <Sparkles className="h-6 w-6 text-white" />
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -308,7 +320,7 @@ export default async function AboutPage() {
         {/* Modern Relevance */}
         <Card className="rounded-3xl border border-border/50 shadow-xl bg-gradient-to-br from-card to-card/80 mb-16 animate-in fade-in slide-in-from-top-8 duration-1000 delay-900">
           <CardContent className="p-8 sm:p-12 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-6 bg-gradient-to-r from-[#8B1E2D] to-[#B5952F] bg-clip-text text-transparent">
               Preserving Heritage for Tomorrow
             </h2>
             <p className="text-muted-foreground text-lg sm:text-xl leading-relaxed mb-8 max-w-4xl mx-auto">
@@ -332,7 +344,7 @@ export default async function AboutPage() {
           <Link href="/">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="bg-gradient-primary text-white border-none font-semibold px-8 py-3 rounded-full shadow-elegant hover:opacity-90 transition-all duration-300 hover:-translate-y-1"
             >
               Explore Our Collection
             </Button>

@@ -61,7 +61,7 @@ export const getOrdersByUserId = async (userId: string) => {
   await dbConnect();
   const user = await userModel.findOne({ clerkId: userId }).select("_id");
   const orders = await OrdersModel.find({ userId: user?._id })
-    .populate("items.productId")
+    .populate({ path: "items.productId", select: "title price images" })
     .sort({ createdAt: -1 });
 
   return JSON.parse(JSON.stringify(orders));
@@ -71,7 +71,7 @@ export const getGuestOrders = async (guestId: string) => {
   await dbConnect();
   
   const orders = await OrdersModel.find({ guestId })
-    .populate("items.productId")
+    .populate({ path: "items.productId", select: "title price images" })
     .sort({ createdAt: -1 });
 
   return JSON.parse(JSON.stringify(orders));
@@ -92,9 +92,7 @@ export const getAllOrders = async () => {
   return docs;
 };
 
-const VALID = ["pending", "completed", "canceled"] as const;
-
-export type OrderStatus = (typeof VALID)[number];
+export type OrderStatus = "pending" | "completed" | "canceled";
 
 export const updateOrderStatus = async (orderId: string, status: string) => {
   await dbConnect();

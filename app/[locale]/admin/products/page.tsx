@@ -10,6 +10,7 @@ import {
   type GetProductsResult,
 } from "@/actions/product.actions";
 import { getCategories } from "@/actions/category.actions";
+import { useUploadThing } from "@/lib/uploadthing";
 
 type Toast = { type: "success" | "error"; message: string };
 type Category = { _id: string; title: string };
@@ -29,7 +30,7 @@ const Products: React.FC = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState<string>("0");
-  const [imagesBase64, setImagesBase64] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   // edit modal
   const [editOpen, setEditOpen] = useState(false);
@@ -42,6 +43,7 @@ const Products: React.FC = () => {
 
   const [toast, setToast] = useState<Toast | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { startUpload, isUploading } = useUploadThing("productImage");
 
   // initial fetch
   useEffect(() => {
@@ -52,7 +54,7 @@ const Products: React.FC = () => {
       else
         setToast({
           type: "error",
-          message: res.error || "Mahsulotlarni yuklab boвЂlmadi",
+          message: res.error || "Mahsulotlarni yuklab bo‘lmadi",
         });
       setLoading(false);
     })();
@@ -66,8 +68,9 @@ const Products: React.FC = () => {
         const json = await getCategories();
         if (json?.ok) {
           setCategories(json.data || []);
-          if (json.data && json.data.length > 0 && !category) {
-            setCategory(json.data[0]._id);
+          if (json.data && json.data.length > 0) {
+            // funksional forma: `category` ni o'qimaymiz, shuning uchun deps bo'sh qolaveradi
+            setCategory((prev) => prev || json.data[0]._id);
           }
         } else {
           setToast({
@@ -84,24 +87,28 @@ const Products: React.FC = () => {
   }, []);
 
   // helpers
-  async function filesToB64(list: FileList | null): Promise<string[]> {
+  // Rasm endi UploadThing CDN'ga yuklanadi, bazaga faqat URL yoziladi.
+  // (Avval fayl base64 ga o'girilib, to'g'ridan-to'g'ri MongoDB'ga saqlanardi —
+  //  har bir rasm ~250 KB joy egallab, sahifa yuklanishini sekinlashtirardi.)
+  async function uploadImages(list: FileList | null): Promise<string[]> {
     if (!list || list.length === 0) return [];
-    const arr = Array.from(list);
-    const asB64 = await Promise.all(
-      arr.map(
-        (file) =>
-          new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(String(reader.result));
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          })
-      )
-    );
-    return asB64;
+    try {
+      const res = await startUpload(Array.from(list));
+      const urls = (res || []).map((f) => f.serverData.url).filter(Boolean);
+      if (!urls.length) {
+        setToast({ type: "error", message: "Rasm yuklanmadi" });
+      }
+      return urls;
+    } catch (e: any) {
+      setToast({
+        type: "error",
+        message: e?.message || "Rasm yuklashda xatolik",
+      });
+      return [];
+    }
   }
   function removeCreateImage(idx: number) {
-    setImagesBase64((prev) => prev.filter((_, i) => i !== idx));
+    setImageUrls((prev) => prev.filter((_, i) => i !== idx));
   }
   function removeEditImage(idx: number) {
     setEImages((prev) => prev.filter((_, i) => i !== idx));
@@ -113,7 +120,7 @@ const Products: React.FC = () => {
       setToast({ type: "error", message: "Iltimos, kategoriyani tanlang." });
       return;
     }
-    formData.set("images", JSON.stringify(imagesBase64));
+    formData.set("images", JSON.stringify(imageUrls));
     startTransition(async () => {
       const res = await createProduct(formData);
       if (res?.ok) {
@@ -125,11 +132,11 @@ const Products: React.FC = () => {
         setDescription("");
         setCategory(categories[0]?._id || "");
         setPrice("0");
-        setImagesBase64([]);
+        setImageUrls([]);
       } else {
         setToast({
           type: "error",
-          message: res?.error || "Xatolik sodir boвЂldi",
+          message: res?.error || "Xatolik sodir bo‘ldi",
         });
       }
     });
@@ -183,17 +190,17 @@ const Products: React.FC = () => {
 
   // DELETE
   async function onDelete(id: string) {
-    const yes = confirm("Rostdan oвЂchirmoqchimisiz?");
+    const yes = confirm("Rostdan o‘chirmoqchimisiz?");
     if (!yes) return;
     startTransition(async () => {
       const res = await deleteProduct(id);
       if (res?.ok) {
         setProducts((prev) => prev.filter((x) => x._id !== id));
-        setToast({ type: "success", message: "OвЂchirildi" });
+        setToast({ type: "success", message: "O‘chirildi" });
       } else {
         setToast({
           type: "error",
-          message: res?.error || "OвЂchirishda xatolik",
+          message: res?.error || "O‘chirishda xatolik",
         });
       }
     });
@@ -266,7 +273,7 @@ const Products: React.FC = () => {
                   >
                     {catsLoading && <option value="">Yuklanmoqda...</option>}
                     {!catsLoading && categories.length === 0 && (
-                      <option value="">Kategoriya yoвЂq</option>
+                      <option value="">Kategoriya yo‘q</option>
                     )}
                     {!catsLoading &&
                       categories.length > 0 &&
@@ -311,21 +318,27 @@ const Products: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Rasmlar (koвЂpi 8 ta)
+                  Rasmlar (ko‘pi 8 ta)
                 </label>
                 <input
                   type="file"
                   accept="image/*"
                   multiple
                   onChange={async (e) => {
-                    const more = await filesToB64(e.target.files);
-                    setImagesBase64((prev) => [...prev, ...more].slice(0, 8));
+                    const more = await uploadImages(e.target.files);
+                    setImageUrls((prev) => [...prev, ...more].slice(0, 8));
+                    e.target.value = "";
                   }}
                   className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10"
                 />
-                {imagesBase64.length > 0 && (
+                {isUploading && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Rasm yuklanmoqda…
+                  </p>
+                )}
+                {imageUrls.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {imagesBase64.map((src, idx) => (
+                    {imageUrls.map((src, idx) => (
                       <div
                         key={idx}
                         className="group relative overflow-hidden rounded-2xl border border-gray-200"
@@ -340,7 +353,7 @@ const Products: React.FC = () => {
                           onClick={() => removeCreateImage(idx)}
                           className="absolute right-2 top-2 hidden rounded-full bg-white/90 px-2 py-1 text-xs shadow-sm group-hover:block"
                         >
-                          OвЂchirish
+                          O‘chirish
                         </button>
                       </div>
                     ))}
@@ -352,7 +365,7 @@ const Products: React.FC = () => {
               <input
                 type="hidden"
                 name="images"
-                value={JSON.stringify(imagesBase64)}
+                value={JSON.stringify(imageUrls)}
               />
 
               <div className="pt-2">
@@ -375,7 +388,7 @@ const Products: React.FC = () => {
             <div className="mt-4 text-sm text-gray-500">Yuklanmoqda...</div>
           ) : products.length === 0 ? (
             <div className="mt-4 text-sm text-gray-500">
-              Hozircha mahsulot yoвЂq.
+              Hozircha mahsulot yo‘q.
             </div>
           ) : (
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -402,7 +415,7 @@ const Products: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{p.title}</div>
                       <div className="text-sm text-gray-600 mt-0.5">
-                        {p.categoryTitle ? p.categoryTitle : "вЂ”"} вЂў{" "}
+                        {p.categoryTitle ? p.categoryTitle : "—"} •{" "}
                         {p.price}
                       </div>
                       {p.description && (
@@ -477,7 +490,7 @@ const Products: React.FC = () => {
                     >
                       {catsLoading && <option value="">Yuklanmoqda...</option>}
                       {!catsLoading && categories.length === 0 && (
-                        <option value="">Kategoriya yoвЂq</option>
+                        <option value="">Kategoriya yo‘q</option>
                       )}
                       {!catsLoading &&
                         categories.length > 0 &&
@@ -521,18 +534,24 @@ const Products: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Rasmlar (koвЂpi 8 ta)
+                    Rasmlar (ko‘pi 8 ta)
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     multiple
                     onChange={async (e) => {
-                      const more = await filesToB64(e.target.files);
+                      const more = await uploadImages(e.target.files);
                       setEImages((prev) => [...prev, ...more].slice(0, 8));
+                      e.target.value = "";
                     }}
                     className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10"
                   />
+                  {isUploading && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Rasm yuklanmoqda…
+                    </p>
+                  )}
 
                   {eImages.length > 0 && (
                     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -551,7 +570,7 @@ const Products: React.FC = () => {
                             onClick={() => removeEditImage(idx)}
                             className="absolute right-2 top-2 hidden rounded-full bg-white/90 px-2 py-1 text-xs shadow-sm group-hover:block"
                           >
-                            OвЂchirish
+                            O‘chirish
                           </button>
                         </div>
                       ))}
@@ -588,7 +607,7 @@ const Products: React.FC = () => {
         )}
 
         <p className="mt-10 text-xs text-gray-500">
-          * Rasmlar <b>base64</b> koвЂrinishda saqlanadi. Katta hajmli media
+          * Rasmlar <b>base64</b> ko‘rinishda saqlanadi. Katta hajmli media
           uchun S3/GCS kabi storage tavsiya etiladi.
         </p>
       </div>

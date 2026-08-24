@@ -14,17 +14,17 @@ interface HeroCarouselProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const slides = [
   {
-    src: "/artsuzani.jpg",
+    src: "/artsuzani.webp",
     alt: "Vintage Suzani embroidery detail",
     caption: "Vintage Suzani — handworked heritage",
   },
   {
-    src: "https://0evi7lr5v8.ufs.sh/f/LN78d9BJu8Qki9XTfbyAmpNgbM2oFeT1E0tjuwd7x6vh8kRI",
+    src: "/hero-2.webp",
     alt: "Bukhara bazaar with textiles",
     caption: "From the bazaars of Bukhara",
   },
   {
-    src: "https://0evi7lr5v8.ufs.sh/f/LN78d9BJu8QkNABTT79Cy1nRQeTGtbLOwEMIa278FAVPXWdz",
+    src: "/hero-3.webp",
     alt: "Hand stitching on Suzani textile",
     caption: "Hand stitching — every thread matters",
   },

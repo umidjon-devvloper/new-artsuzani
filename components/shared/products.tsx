@@ -1,10 +1,11 @@
 "use client";
 
 import type React from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import LikeButton from "@/components/product/like-button";
 
 // === Types (unchanged) ===
 type Product = {
@@ -22,11 +23,12 @@ type Props = {
   products: Product[];
   onView?: (product: Product) => void;
   currency?: string; // masalan: "USD", "EUR"
+  favoritedIds?: string[]; // foydalanuvchi yoqtirgan mahsulot ID'lari
 };
 
 // === Utils (unchanged logic) ===
 const formatPrice = (value?: number, currency = "USD") => {
-  if (typeof value !== "number") return "вЂ”";
+  if (typeof value !== "number") return "—";
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -39,17 +41,22 @@ const formatPrice = (value?: number, currency = "USD") => {
 };
 
 // === Component ===
-const Products: React.FC<Props> = ({ products, currency = "USD" }) => {
+const Products: React.FC<Props> = ({
+  products,
+  currency = "USD",
+  favoritedIds = [],
+}) => {
   const t = useTranslations("Common");
+  const favSet = new Set(favoritedIds);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {products?.map((product, index) => (
         <Card
           key={product._id}
-          className="group pt-0 cursor-pointer border-transparent bg-[var(--card-bg)] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 rounded-[16px]"
+          className="group pt-0 cursor-pointer border-transparent bg-[var(--card-bg)] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 rounded-[16px] animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-700"
           style={{
-            animationDelay: `${index * 0.1}s`,
+            animationDelay: `${Math.min(index, 8) * 80}ms`,
           }}
         >
           {/* Product Image Placeholder */}
@@ -67,6 +74,12 @@ const Products: React.FC<Props> = ({ products, currency = "USD" }) => {
             )}
             
             <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+            {/* Yoqtirish tugmasi — mahsulotni ochmasdan */}
+            <LikeButton
+              productId={product._id}
+              initialLiked={favSet.has(product._id)}
+            />
 
             {/* Category Badge */}
             {product.categoryTitle && (
@@ -90,7 +103,7 @@ const Products: React.FC<Props> = ({ products, currency = "USD" }) => {
             <div className="flex flex-col gap-4 pt-4 border-t border-black/5">
               <div className="flex items-center justify-between">
                 <span className="text-2xl font-bold font-serif text-[var(--price-color)]">
-                  {formatPrice(product.price)}
+                  {formatPrice(product.price, currency)}
                 </span>
                 <span className="text-xs font-semibold px-2 py-1 bg-[#F5ECD5] text-[#8C6239] rounded-sm border border-[#E8DCC4] flex items-center gap-1 shadow-sm">
                   {t("freeShipping")}

@@ -10,7 +10,9 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  // MUHIM: flat config'da global ignore uchun obyektda FAQAT `ignores` bo'lishi kerak.
+  // Avval u `rules` bilan bir obyektda edi, shuning uchun .next/ ham tekshirilardi
+  // (10 000 dan ortiq soxta xato generatsiya qilingan kodda).
   {
     ignores: [
       "node_modules/**",
@@ -18,10 +20,14 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "public/**",
     ],
+  },
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-      "@next/next/no-img-element": "off", // 👈 disable img warning
+      "@next/next/no-img-element": "off",
     },
   },
 ];

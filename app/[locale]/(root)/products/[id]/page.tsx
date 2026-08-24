@@ -1,128 +1,122 @@
-// app/(root)/products/[id]/page.tsx
-import { AddToCart, GetCart } from "@/actions/cart.actions";
+// app/[locale]/(root)/products/[id]/page.tsx
+import { AddToCart } from "@/actions/cart.actions";
 import {
-  GetFavorite,
   isProductFavorited,
   toggleFavorite,
 } from "@/actions/favorite.actions";
 import { GetProductsID } from "@/actions/product.actions";
 import ProductDetail from "@/components/product/ProductDetail";
-import Header from "@/components/shared/header";
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import type { Metadata } from "next";
+import { routing } from "@/i18n/routing";
+import { SITE_URL, absoluteUrl } from "@/lib/site";
+
+type Params = Promise<{ locale: string; id: string }>;
+
+/**
+ * Ijtimoiy tarmoqlar uchun rasm manzillari.
+ * base64 (`data:`) rasmlar OG rasm bo'la olmaydi — ular chiqarib tashlanadi.
+ */
+function toAbsoluteImages(images?: string[]): string[] {
+  return (images || [])
+    .filter((s): s is string => Boolean(s) && !s.startsWith("data:"))
+    .map((s) => (s.startsWith("http") ? s : `${SITE_URL}${s}`));
+}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Params;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { locale, id } = await params;
 
   try {
     const product = await GetProductsID(id);
-    const data = product && "data" in product ? product.data : product;
-    if (!data)
+    if (!product) {
       return {
         title: "Product not found",
         robots: { index: false, follow: false },
       };
+    }
 
-    const p = JSON.parse(JSON.stringify(data)) as {
-      _id?: string;
+    const p = JSON.parse(JSON.stringify(product)) as {
       title?: string;
-      name?: string;
-      slug?: string;
       description?: string;
-      images?: string[]; // absolute yoki relative
-      price?: number | string;
-      currency?: string; // e.g. "USD"
-      brand?: string;
-      category?: string;
-      sku?: string;
-      rating?: { value?: number; count?: number };
+      images?: string[];
+      price?: number;
+      category?: { title?: string };
     };
 
-    const title = p.title || p.name || "Product";
+    const title = p.title?.trim() || "Product";
     const desc =
-      (p.description && p.description.slice(0, 160)) ||
+      p.description?.trim().slice(0, 160) ||
       `${title} — detailed product information, price and availability.`;
 
-    // Rasmlar absolute URL bo‘lishi kerak (agar /uploads/... bo‘lsa, domenni qo‘shing)
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
-    const imagesAbs = (p.images || [])
-      .filter(Boolean)
-      .map((src) => (src.startsWith("http") ? src : `${baseUrl}${src}`));
-
-    const url = `${baseUrl}/products/${id}`;
+    const url = absoluteUrl(locale, `/products/${id}`);
+    const images = toAbsoluteImages(p.images);
+    const ogImages = images.length ? images : [`${SITE_URL}/og-image.jpg`];
 
     return {
-      title: `${title} | MyStore`,
+      // Sarlavha shabloni yuqoridagi layout'da: "%s | Artsuzani"
+      title,
       description: desc,
-      keywords: [title, p.brand, p.category, "buy", "price"].filter(
+      keywords: [title, p.category?.title, "buy", "price"].filter(
         Boolean
       ) as string[],
-      alternates: { canonical: url },
+      alternates: {
+        canonical: url,
+        languages: Object.fromEntries(
+          routing.locales.map((l) => [l, absoluteUrl(l, `/products/${id}`)])
+        ),
+      },
       openGraph: {
         type: "website",
         url,
-        title: `${title} | MyStore`,
+        title,
         description: desc,
-        images: imagesAbs.length
-          ? imagesAbs.map((u) => ({ url: u }))
-          : [{ url: `${baseUrl}/og-default.jpg` }],
+        images: ogImages.map((u) => ({ url: u })),
       },
       twitter: {
         card: "summary_large_image",
-        title: `${title} | MyStore`,
+        title,
         description: desc,
-        images: imagesAbs.length ? imagesAbs : [`${baseUrl}/og-default.jpg`],
+        images: ogImages,
       },
-      robots: {
-        index: true,
-        follow: true,
-      },
+      robots: { index: true, follow: true },
     };
   } catch {
     return { title: "Product", robots: { index: false, follow: false } };
   }
 }
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+
+export default async function Page({ params }: { params: Params }) {
+  const { locale, id } = await params;
   const { userId } = await auth();
-  
-  // --- Fetch product safely and ensure it's RSC-serializable ---
+
+  // --- Mahsulotni xavfsiz olamiz va RSC uchun serializable qilamiz ---
   let safeProduct: any = null;
   try {
     const product = await GetProductsID(id);
-    const data = product && "data" in product ? product.data : product;
-    if (!data) return notFound(); // 404 if missing
-    // Strip non-serializable fields (ObjectId/Date/Methods) for RSC:
-    safeProduct = JSON.parse(JSON.stringify(data));
+    if (!product) return notFound();
+    safeProduct = JSON.parse(JSON.stringify(product));
   } catch (e) {
-    // You’ll see details in server logs/dev, but shield prod users
     console.error("GetProductsID failed:", e);
     return notFound();
   }
-  // --- Auth + favorites guarded ---
 
   let isFavorited = false;
-
   try {
     if (userId && safeProduct?._id) {
       isFavorited = await isProductFavorited(userId, String(safeProduct._id));
     }
   } catch (e) {
-    // Don’t hard-fail the whole page if favorites choke
+    // Sevimlilar ishlamasa ham sahifa ochilaversin
     console.warn("Favorite computation failed:", e);
   }
 
-  // --- Server Actions (must only use serializable args) ---
+  // --- Server Actions (faqat serializable argumentlar) ---
   async function onToggleFavorite(productId: string) {
     "use server";
     const { userId } = await auth();
@@ -134,27 +128,25 @@ export default async function Page({
   async function addCart(productId: string) {
     "use server";
     const { userId } = await auth();
-    // No need to throw if !userId; guest cart will be used instead
+    // !userId bo'lsa xato bermaymiz — mehmon savatchasi ishlatiladi
     await AddToCart(userId, productId, 1);
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://artsuzani.com";
-  const firstImage = Array.isArray(safeProduct.images) && safeProduct.images.length > 0 
-    ? (safeProduct.images[0].startsWith("http") ? safeProduct.images[0] : `${baseUrl}${safeProduct.images[0]}`) 
-    : undefined;
+  const productUrl = absoluteUrl(locale, `/products/${id}`);
+  const ogImage = toAbsoluteImages(safeProduct.images)[0];
 
   const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: safeProduct.title || safeProduct.name,
-    image: firstImage,
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: safeProduct.title,
+    ...(ogImage ? { image: ogImage } : {}),
     description: safeProduct.description,
     offers: {
-      '@type': 'Offer',
+      "@type": "Offer",
       price: safeProduct.price,
-      priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
-      url: `${baseUrl}/products/${safeProduct._id}`
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: productUrl,
     },
   };
 

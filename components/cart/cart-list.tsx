@@ -42,7 +42,9 @@ export default function CartList({
   );
 
   const money = (n: number) =>
-    new Intl.NumberFormat(undefined, {
+    // MUHIM: locale aniq berilishi kerak. `undefined` serverda server locale'ini,
+    // brauzerda foydalanuvchi locale'ini oladi -> "85,00 $" vs "$85.00" va hydration mismatch.
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(n);
@@ -60,7 +62,7 @@ export default function CartList({
 
   if (!items.length) {
     return (
-      <div className="max-w-3xl mx-auto p-12 text-center bg-white rounded-2xl shadow-soft border border-border mt-8">
+      <div className="max-w-3xl mx-auto p-12 text-center bg-card rounded-2xl shadow-soft border border-border mt-8">
         <p className="text-xl font-serif text-muted-foreground">Your cart is beautifully empty.</p>
         <Button onClick={() => route.push("/products")} className="mt-6 rounded-full px-8 bg-gradient-primary text-white shadow-sm hover:opacity-90">
           Explore Collection
@@ -70,20 +72,19 @@ export default function CartList({
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-8 bg-white/50 min-h-screen">
-      <h1 className="text-3xl font-serif font-bold text-foreground mb-8 pb-4 border-b border-border">Shopping Cart</h1>
+    <div className="max-w-5xl mx-auto p-4 md:p-8 pt-0 md:pt-0 min-h-screen">
       <ul className="space-y-4">
         {items.map((it) => {
           const p = (it.productId as any) || {};
           const title =
             typeof p === "object" ? p.title || "Untitled" : "Untitled";
-          const price = typeof p === "object" ? p.price || 0 : 0;
+          const price = typeof p === "object" ? Number(p.price) || 0 : 0;
           const img = typeof p === "object" ? p.images?.[0] : undefined;
 
           return (
             <li
               key={it._id}
-              className="bg-white border border-border/60 rounded-2xl p-4 flex gap-4 md:gap-6 items-center shadow-sm hover:shadow-elegant-light transition-shadow"
+              className="bg-card border border-border/60 rounded-2xl p-4 flex gap-4 md:gap-6 items-center shadow-sm hover:shadow-elegant-light transition-shadow"
             >
               {/* Rasm */}
               <div className="w-20 h-20 md:w-24 md:h-24 relative rounded-xl overflow-hidden bg-gray-100 shrink-0">
@@ -127,7 +128,7 @@ export default function CartList({
                   </button>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-3 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-4 border border-border rounded-full px-1 shadow-sm bg-gray-50/50">
                     <button
                       onClick={() => onDec(it._id)}
@@ -148,6 +149,16 @@ export default function CartList({
                     >
                       +
                     </button>
+                  </div>
+
+                  {/* Narx: birlik narxi x soni, va shu qator uchun jami */}
+                  <div className="text-right shrink-0">
+                    <div className="text-xs text-muted-foreground tabular-nums">
+                      {money(price)} &times; {it.quantity}
+                    </div>
+                    <div className="font-serif text-lg font-bold text-[var(--price-color)] tabular-nums">
+                      {money(price * it.quantity)}
+                    </div>
                   </div>
                 </div>
               </div>

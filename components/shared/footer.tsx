@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Heart, Search, LogIn, ShoppingCart } from "lucide-react";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 
 export default function Footer() {
@@ -36,6 +35,9 @@ export default function Footer() {
               <li>
                 <Link prefetch={false} href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Journal</Link>
               </li>
+              <li>
+                <Link prefetch={false} href="/workshop" className="text-sm text-muted-foreground hover:text-primary transition-colors">Workshop</Link>
+              </li>
             </ul>
           </div>
 
@@ -44,16 +46,19 @@ export default function Footer() {
             <h3 className="text-lg font-serif font-bold text-foreground">Support</h3>
             <ul className="space-y-3">
               <li>
+                <Link prefetch={false} href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact</Link>
+              </li>
+              <li>
                 <Link prefetch={false} href="/shopping/cart" className="text-sm text-muted-foreground hover:text-primary transition-colors">Your Cart</Link>
               </li>
               <li>
                 <Link prefetch={false} href="/favorite" className="text-sm text-muted-foreground hover:text-primary transition-colors">Saved Items</Link>
               </li>
               <li>
-                <span className="text-sm text-muted-foreground">Shipping Policy</span>
+                <Link prefetch={false} href="/shipping" className="text-sm text-muted-foreground hover:text-primary transition-colors">Shipping Policy</Link>
               </li>
               <li>
-                <span className="text-sm text-muted-foreground">Returns & Exchanges</span>
+                <Link prefetch={false} href="/returns" className="text-sm text-muted-foreground hover:text-primary transition-colors">Returns &amp; Exchanges</Link>
               </li>
             </ul>
           </div>
@@ -68,11 +73,11 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Your email address"
-                className="flex-1 bg-background border border-border rounded-l-md px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
+                className="flex-1 min-w-0 bg-background border border-border rounded-l-md px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
               />
               <button
                 type="button"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-r-md font-medium text-sm transition-colors shadow-sm"
+                className="shrink-0 whitespace-nowrap bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-r-md font-medium text-sm transition-colors shadow-sm"
               >
                 Subscribe
               </button>
@@ -85,8 +90,8 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Artsuzani. All rights reserved. Let the authentic beauty of Bukhara adorn your life.
           </p>
           <div className="flex items-center space-x-6">
-            <span className="text-sm text-muted-foreground hover:text-primary cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="text-sm text-muted-foreground hover:text-primary cursor-pointer transition-colors">Terms of Service</span>
+            <Link prefetch={false} href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link prefetch={false} href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

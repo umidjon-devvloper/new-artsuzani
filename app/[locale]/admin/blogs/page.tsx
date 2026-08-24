@@ -81,7 +81,7 @@ const BlogsPage = () => {
 
   const handleDelete = async (id?: string) => {
     if (!id) return;
-    const ok = confirm("Haqiqatan ham oвЂchirmoqchimisiz?");
+    const ok = confirm("Haqiqatan ham o‘chirmoqchimisiz?");
     if (!ok) return;
     try {
       setLoading(true);

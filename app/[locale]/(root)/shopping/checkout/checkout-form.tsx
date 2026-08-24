@@ -21,11 +21,9 @@ type CartItem = {
 
 export default function CheckoutForm({
   userId,
-  guestId,
   items,
 }: {
   userId: string;
-  guestId: string;
   items: CartItem[];
 }) {
   const [isPending, startTransition] = useTransition();
@@ -45,7 +43,7 @@ export default function CheckoutForm({
     startTransition(async () => {
       setFormError(null);
       try {
-        const order = await createOrder(
+        await createOrder(
           userId || null,
           items.map((it) => ({
             productId: it.productId._id,
@@ -65,7 +63,7 @@ export default function CheckoutForm({
   };
 
   return (
-    <div className="bg-white/50 backdrop-blur-md rounded-2xl shadow-sm border border-border p-6 md:p-8">
+    <div className="bg-card/60 backdrop-blur-md rounded-2xl shadow-sm border border-border p-6 md:p-8">
       <h2 className="text-xl font-serif font-bold text-foreground mb-6">
         Customer Details
       </h2>
@@ -79,7 +77,7 @@ export default function CheckoutForm({
               placeholder="e.g. John Doe"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="h-12 border-border/60 focus:ring-primary bg-white/80"
+              className="h-12 border-border/60 focus:ring-primary bg-background/80"
               disabled={isPending}
             />
           </div>
@@ -91,7 +89,7 @@ export default function CheckoutForm({
               placeholder="e.g. 123 Suzani St, Tashkent, Uzbekistan"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="h-12 border-border/60 focus:ring-primary bg-white/80"
+              className="h-12 border-border/60 focus:ring-primary bg-background/80"
               disabled={isPending}
             />
           </div>

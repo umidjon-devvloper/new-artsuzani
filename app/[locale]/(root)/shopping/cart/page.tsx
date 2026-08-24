@@ -13,7 +13,6 @@ const Cart = async () => {
   
   const rawItems = await GetCart(userId || null, guestId);
   // Map rawItems to CartItem[]
-  console.log("Raw Cart Items:", rawItems); // Debugging line
   const items = rawItems.map((item: any) => ({
     _id: item._id,
     productId: item.productId,
@@ -24,11 +23,13 @@ const Cart = async () => {
   }));
 
   return (
-    <div>
-      <div className="mt-24">
-        <h1 className="text-2xl text-center">{t("title")}</h1>
-        <CartList userId={userId ?? ""} items={items} />
+    <div className="mt-24">
+      <div className="max-w-5xl mx-auto px-4 md:px-8">
+        <h1 className="text-3xl font-serif font-bold text-foreground mb-8 pb-4 border-b border-border">
+          {t("title")}
+        </h1>
       </div>
+      <CartList userId={userId ?? ""} items={items} />
     </div>
   );
 };

@@ -1,14 +1,20 @@
 import { getCategories } from "@/actions/category.actions";
 import { getProducts } from "@/actions/product.actions";
+import { getFavoritedProductIds } from "@/actions/favorite.actions";
 import Category from "@/components/shared/category";
 import Products from "@/components/shared/products";
 import { DynamicHeroCarousel } from "@/lib/dynamic-imports";
 import { getTranslations } from "next-intl/server";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function Home() {
-  const t = await getTranslations("Home");
-  const category = await getCategories();
-  const products = await getProducts();
+  const { userId } = await auth();
+  const [t, category, products, favoritedIds] = await Promise.all([
+    getTranslations("Home"),
+    getCategories(),
+    getProducts(),
+    getFavoritedProductIds(userId),
+  ]);
 
   const productList = Array.isArray((products as any)?.data)
     ? JSON.parse(
@@ -118,7 +124,11 @@ export default async function Home() {
             </h2>
             <div className="h-px bg-border flex-1 ml-6 hidden sm:block"></div>
           </div>
-          <Products products={productList} currency="USD" />
+          <Products
+            products={productList}
+            currency="USD"
+            favoritedIds={favoritedIds}
+          />
         </section>
       </main>
     </div>

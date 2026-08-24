@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { Home, Search, Grid, ShoppingCart, Package, User, Heart } from "lucide-react";
+import { Home, Search, ShoppingCart, Package, User, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 

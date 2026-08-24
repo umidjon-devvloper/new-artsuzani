@@ -20,7 +20,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 
@@ -62,7 +61,6 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
-  const { setOpen } = useSidebar();
   const route = useRouter();
   return (
     <Sidebar collapsible="icon" className="overflow-hidden " {...props}>

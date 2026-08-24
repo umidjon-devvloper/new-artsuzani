@@ -12,11 +12,9 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import OrderStatus from "../_components/order-status"; // <— YANGI
-import { date } from "zod";
 
 export default async function OrdersPage() {
   const orders = await getAllOrders();
-  console.log("OrdersPage orders:", orders);
   const createdAt = (date: any) => {
     return new Date(date).toLocaleDateString("uz-Uz", {
       year: "numeric",

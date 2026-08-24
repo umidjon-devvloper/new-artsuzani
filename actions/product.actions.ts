@@ -5,6 +5,8 @@ import productModel from "@/models/product.model";
 import categoryModel from "@/models/category.model";
 import mongoose, { isValidObjectId, Types } from "mongoose";
 import { z } from "zod";
+import { unstable_cache, revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 /** ========= TYPES ========= */
 export type ProductDTO = {
@@ -27,18 +29,20 @@ export type UpdateProductResult = { ok: true; data: ProductDTO } | ActionError;
 export type DeleteProductResult = { ok: true } | ActionError;
 
 /** ========= SCHEMAS ========= */
-const base64ImageSchema = z
+// Rasmlar endi UploadThing CDN'da saqlanadi — bazaga faqat URL yoziladi.
+// (Avval bu yerda base64 data-URI kutilardi va har bir rasm ~250 KB joy egallardi.)
+const imageUrlSchema = z
   .string()
-  .regex(/^data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/);
+  .url("Rasm manzili noto'g'ri");
 
 const createProductSchema = z.object({
   title: z.string().min(1, "Title kerak"),
   description: z.string().optional(),
   category: z.string().min(1, "Category kerak"),
-  price: z.coerce.number().min(0, "Narx 0 dan katta boвЂlsin"),
+  price: z.coerce.number().min(0, "Narx 0 dan katta bo‘lsin"),
   images: z
-    .array(base64ImageSchema)
-    .max(8, "Eng koвЂpi bilan 8ta rasm")
+    .array(imageUrlSchema)
+    .max(8, "Eng ko‘pi bilan 8ta rasm")
     .optional(),
 });
 
@@ -46,8 +50,8 @@ const updateProductSchema = z.object({
   title: z.string().min(1, "Title kerak"),
   description: z.string().optional(),
   category: z.string().min(1, "Category kerak"),
-  price: z.coerce.number().min(0, "Narx 0 dan katta boвЂlsin"),
-  images: z.array(base64ImageSchema).max(8).optional(),
+  price: z.coerce.number().min(0, "Narx 0 dan katta bo‘lsin"),
+  images: z.array(imageUrlSchema).max(8).optional(),
 });
 
 /** ========= HELPERS ========= */
@@ -106,8 +110,8 @@ function parseImagesField(
 }
 
 /** ========= ACTIONS ========= */
-export async function getProducts(): Promise<GetProductsResult> {
-  try {
+const readProducts = unstable_cache(
+  async (): Promise<ProductDTO[]> => {
     await dbConnect();
     const docs = await productModel
       .find(
@@ -125,8 +129,15 @@ export async function getProducts(): Promise<GetProductsResult> {
       .populate({ path: "category", select: "title" })
       .sort({ createdAt: -1 })
       .lean<ProductLean[]>();
+    return docs.map(toDTO);
+  },
+  ["products-list"],
+  { tags: [CACHE_TAGS.products], revalidate: 3600 }
+);
 
-    return { ok: true, data: docs.map(toDTO) };
+export async function getProducts(): Promise<GetProductsResult> {
+  try {
+    return { ok: true, data: await readProducts() };
   } catch (err) {
     console.error("getProducts error:", err);
     return { ok: false, error: "Mahsulotlarni olishda xatolik" };
@@ -156,7 +167,7 @@ export async function createProduct(
   const { title, description, category, price, images } = parsed.data;
 
   if (!mongoose.Types.ObjectId.isValid(category)) {
-    return { ok: false, error: "NotoвЂgвЂri kategoriya ID" };
+    return { ok: false, error: "Noto‘g‘ri kategoriya ID" };
   }
 
   // ixtiyoriy: kategoriya mavjudligini tekshirish
@@ -171,30 +182,31 @@ export async function createProduct(
     images: images ?? [],
   });
 
-  // qayta oвЂqib, populate qilamiz
+  // qayta o‘qib, populate qilamiz
   const doc = await productModel
     .findById(created._id)
     .populate({ path: "category", select: "title" })
     .lean<ProductLean>();
 
   if (!doc)
-    return { ok: false, error: "Yaratildi, lekin qayta oвЂqib boвЂlmadi" };
+    return { ok: false, error: "Yaratildi, lekin qayta o‘qib bo‘lmadi" };
+
+  revalidateTag(CACHE_TAGS.products);
   return { ok: true, data: toDTO(doc) };
 }
 
 export async function getCategoriesProducts(categoryId: string) {
-  await dbConnect();
+  if (!isValidObjectId(categoryId)) return [];
 
-  if (!isValidObjectId(categoryId)) {
-    throw new Error("Invalid category id");
-  }
+  await dbConnect();
 
   const products = await productModel
     .find({ category: new mongoose.Types.ObjectId(categoryId) })
-    .populate("category")
-    .lean();
+    .populate({ path: "category", select: "title" })
+    .sort({ createdAt: -1 })
+    .lean<ProductLean[]>();
 
-  return products; // [] bo'lishi mumkin
+  return products.map(toDTO);
 }
 
 export async function updateProduct(
@@ -204,7 +216,7 @@ export async function updateProduct(
   await dbConnect();
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return { ok: false, error: "NotoвЂgвЂri product id" };
+    return { ok: false, error: "Noto‘g‘ri product id" };
   }
 
   const raw = {
@@ -225,7 +237,7 @@ export async function updateProduct(
   const { title, description, category, price, images } = parsed.data;
 
   if (!mongoose.Types.ObjectId.isValid(category)) {
-    return { ok: false, error: "NotoвЂgвЂri kategoriya ID" };
+    return { ok: false, error: "Noto‘g‘ri kategoriya ID" };
   }
 
   const exists = await productModel.findById(id).select("_id").lean();
@@ -247,15 +259,21 @@ export async function updateProduct(
     .lean<ProductLean | null>();
 
   if (!updated) return { ok: false, error: "Yangilashda xatolik" };
+
+  revalidateTag(CACHE_TAGS.products);
   return { ok: true, data: toDTO(updated) };
 }
 export async function GetProductsID(id: string) {
-  try {
-    const product = await productModel.findById(id).populate("category");
-    return product;
-  } catch (error) {
-    console.log(error);
-  }
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
+
+  await dbConnect();
+
+  const product = await productModel
+    .findById(id)
+    .populate({ path: "category", select: "title" })
+    .lean();
+
+  return product ?? null;
 }
 
 export async function deleteProduct(
@@ -264,11 +282,12 @@ export async function deleteProduct(
   await dbConnect();
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return { ok: false, error: "NotoвЂgвЂri product id" };
+    return { ok: false, error: "Noto‘g‘ri product id" };
   }
 
   const res = await productModel.deleteOne({ _id: id });
   if (res.deletedCount === 0) return { ok: false, error: "Mahsulot topilmadi" };
 
+  revalidateTag(CACHE_TAGS.products);
   return { ok: true };
 }

@@ -3,7 +3,6 @@
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import * as React from "react";
 import { Button } from "../ui/button";
-import { SignInButton, useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { useRouter } from "@/i18n/routing";
 import Image from "next/image";
@@ -54,11 +53,11 @@ export default function ProductDetail({
   product: Product;
   isFavorited: boolean;
   onToggleFavorite: (productId: string) => Promise<void>;
-  AddCart: (productId: string) => Promise<void>; // вњ… Promise
+  AddCart: (productId: string) => Promise<void>; // ✅ Promise
 }) {
   const t = useTranslations("Common");
 
-  // вњ… Xavfsiz, moslashuvchan ekstraksiya
+  // ✅ Xavfsiz, moslashuvchan ekstraksiya
   const images = extractImages(product?.images);
   const [idx, setIdx] = React.useState(0);
   const total = images.length;
@@ -66,7 +65,7 @@ export default function ProductDetail({
   const [quantity, setQuantity] = React.useState(1);
   const route = useRouter();
 
-  // рџ§  optimistic state
+  // 🧠 optimistic state
   const [liked, setLiked] = React.useState(isFavorited);
   React.useEffect(() => setLiked(isFavorited), [isFavorited]);
 
@@ -300,7 +299,7 @@ export default function ProductDetail({
                      await AddCart(String(product._id));
                    }
                    route.push("/shopping/checkout");
-                 } catch(e) {
+                 } catch {
                    toast.error("Failed to process checkout");
                  } finally {
                    setAdding(false);
@@ -341,7 +340,7 @@ export default function ProductDetail({
 
 /* Helpers */
 function formatPrice(value?: number, currency = "USD") {
-  if (typeof value !== "number") return "вЂ”";
+  if (typeof value !== "number") return "—";
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

@@ -3,7 +3,7 @@ const uzum = [
     title: "Ayollar uchun milliy uslubdagi qo'l kashtali jaket, premium dizayn",
     description:
       "Buxoro kashtasi bilan bezatilgan, yuqori sifatli matodan tikilgan, milliy uslubdagi jaket.",
-    image: "/uzum/image.png",
+    image: "/uzum/image.webp",
     url: "https://uzum.uz/uz/product/ayollar-uchun-milliy-2625858",
   },
 ];
@@ -13,28 +13,28 @@ const yandex = [
     title: "Ayollar uchun milliy uslubdagi qo'l kashtali jaket, premium dizayn",
     description:
       "Buxoro kashtasi bilan bezatilgan, yuqori sifatli matodan tikilgan, milliy uslubdagi jaket.",
-    image: "/uzum/image.png",
+    image: "/uzum/image.webp",
     url: "https://market.yandex.uz/card/slug/5554278426?businessId=216503443",
   },
   {
     title: "Пиджак 10",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/yandex/image-1.png",
+    image: "/yandex/image-1.webp",
     url: "https://market.yandex.uz/card/zhenskiy-zhaket-v-natsionalnom-stile-s-ruchnoy-vyshivkoy-premialnyy-dizayn/5554643711?businessId=216503443",
   },
   {
     title: "Пиджак 11",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/yandex/image-2.png",
+    image: "/yandex/image-2.webp",
     url: "http://market.yandex.uz/card/zhenskiy-zhaket-v-natsionalnom-stile-s-ruchnoy-vyshivkoy-premialnyy-dizayn/5554521294?businessId=216503443",
   },
   {
     title: "Пиджак 12",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/yandex/image-3.png",
+    image: "/yandex/image-3.webp",
     url: "https://market.yandex.uz/card/zhenskiy-zhaket-v-natsionalnom-stile-s-ruchnoy-vyshivkoy-premialnyy-dizayn/5554650647?businessId=216503443",
   },
 ];
@@ -44,28 +44,28 @@ const ozon = [
     title: "Пиджак 1",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/ozon/image-1.png",
+    image: "/ozon/image-1.webp",
     url: "https://uz.ozon.com/product/pidzhak-1-3880290052/",
   },
   {
     title: "Пиджак 2",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/ozon/image-2.png",
+    image: "/ozon/image-2.webp",
     url: "https://uz.ozon.com/product/pidzhak-1-3885074742/",
   },
   {
     title: "Пиджак 3",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/ozon/image-3.png",
+    image: "/ozon/image-3.webp",
     url: "https://uz.ozon.com/product/pidzhak-1-3885165563/",
   },
   {
     title: "Пиджак для женщин ручной работа",
     description:
       "Этот жакет сочетает в себе национальные традиции и современный стиль. Ручная вышивка придаёт изделию уникальность.",
-    image: "/ozon/image-4.png",
+    image: "/ozon/image-4.webp",
     url: "https://uz.ozon.com/product/pidzhak-pidzhak-dlya-zhenshchin-ruchnoy-rabota-3885185196/",
   },
 ];
@@ -75,28 +75,28 @@ const wb = [
     title: "Жакет в национальном стиле с ручной вышивкой",
     description:
       "Поделитесь мнением о покупке и помогите другим покупателям сделать выбор",
-    image: "/wb/image-1.png",
+    image: "/wb/image-1.webp",
     url: "https://www.wildberries.ru/catalog/951370062/detail.aspx",
   },
   {
     title: "Жакет в национальном стиле с ручной вышивкой",
     description:
       "Поделитесь мнением о покупке и помогите другим покупателям сделать выбор",
-    image: "/wb/image-2.png",
+    image: "/wb/image-2.webp",
     url: "https://www.wildberries.ru/catalog/951405110/detail.aspx",
   },
   {
     title: "Жакет в национальном стиле с ручной вышивкой",
     description:
       "Поделитесь мнением о покупке и помогите другим покупателям сделать выбор",
-    image: "/wb/image-3.png",
+    image: "/wb/image-3.webp",
     url: "https://www.wildberries.ru/catalog/951405111/detail.aspx",
   },
   {
     title: "Жакет в национальном стиле с ручной вышивкой",
     description:
       "Поделитесь мнением о покупке и помогите другим покупателям сделать выбор",
-    image: "/wb/image-4.png",
+    image: "/wb/image-4.webp",
     url: "https://www.wildberries.ru/catalog/951393055/detail.aspx",
   },
 ];
@@ -398,7 +398,7 @@ const ProductCard = ({
     className="mp-card"
   >
     <div className="mp-card-img-wrap">
-      <img src={item.image} alt={item.title} />
+      <img src={item.image} alt={item.title} loading="lazy" decoding="async" />
       <div className="mp-card-overlay">
         <span>Ko&apos;rish →</span>
       </div>

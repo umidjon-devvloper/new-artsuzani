@@ -4,6 +4,8 @@ import dbConnect from "@/lib/connection";
 import categoryModel from "@/models/category.model";
 import mongoose, { Types } from "mongoose";
 import { z } from "zod";
+import { unstable_cache, revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 /** ===== TYPES ===== */
 export type CategoryDTO = {
@@ -28,15 +30,17 @@ export type UpdateCategoryResult =
 export type DeleteCategoryResult = { ok: true } | ActionError;
 
 /** ===== SCHEMAS ===== */
-const base64ImageSchema = z
+// Rasmlar endi UploadThing CDN'da saqlanadi — bazaga faqat URL yoziladi.
+// (Avval bu yerda base64 data-URI kutilardi va har bir rasm ~250 KB joy egallardi.)
+const imageUrlSchema = z
   .string()
-  .regex(/^data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/)
+  .url("Rasm manzili noto'g'ri")
   .optional();
 
 const upsertCategorySchema = z.object({
   title: z.string().min(1, "Title kerak"),
   description: z.string().optional(),
-  image: base64ImageSchema,
+  image: imageUrlSchema,
 });
 
 /** ===== HELPERS ===== */
@@ -53,14 +57,22 @@ function toDTO(d: any): CategoryDTO {
 }
 
 /** ===== ACTIONS ===== */
-export async function getCategories(): Promise<GetCategoriesResult> {
-  try {
+const readCategories = unstable_cache(
+  async (): Promise<CategoryDTO[]> => {
     await dbConnect();
     const docs = await categoryModel
       .find({}, { _id: 1, title: 1, description: 1, image: 1 })
       .sort({ title: 1 })
       .lean();
-    return { ok: true, data: docs.map(toDTO) };
+    return docs.map(toDTO);
+  },
+  ["categories-list"],
+  { tags: [CACHE_TAGS.categories], revalidate: 3600 }
+);
+
+export async function getCategories(): Promise<GetCategoriesResult> {
+  try {
+    return { ok: true, data: await readCategories() };
   } catch (err) {
     console.error("getCategories error:", err);
     return { ok: false, error: "Kategoriya olishda xatolik" };
@@ -97,6 +109,10 @@ export async function createCategories(
     return { ok: false, error: "Bu nomdagi kategoriya allaqachon mavjud" };
 
   const doc = await categoryModel.create({ title, description, image });
+
+  // Kategoriya nomi mahsulot kartalarida ham ko'rinadi -> ikkala keshni yangilaymiz
+  revalidateTag(CACHE_TAGS.categories);
+  revalidateTag(CACHE_TAGS.products);
   return { ok: true, data: toDTO(doc) };
 }
 
@@ -104,8 +120,10 @@ export async function updateCategory(
   id: string,
   formData: FormData
 ): Promise<UpdateCategoryResult> {
+  await dbConnect();
+
   if (!Types.ObjectId.isValid(id)) {
-    return { ok: false, error: "NotoвЂgвЂri category id" as const };
+    return { ok: false, error: "Noto‘g‘ri category id" as const };
   }
 
   const title = (formData.get("title") || "").toString();
@@ -117,7 +135,7 @@ export async function updateCategory(
     return { ok: false, error: "Title kerak" as const };
   }
 
-  // 2) currentвЂ™ni aniq tip bilan olamiz
+  // 2) current’ni aniq tip bilan olamiz
   type CategoryLean = {
     _id: Types.ObjectId;
     title: string;
@@ -135,7 +153,7 @@ export async function updateCategory(
     return { ok: false, error: "Kategoriya topilmadi" as const };
   }
 
-  // 3) Title oвЂzgargan boвЂlsa, duplicate nomni tekshiramiz
+  // 3) Title o‘zgargan bo‘lsa, duplicate nomni tekshiramiz
   const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   if (title.toLowerCase() !== current.title.toLowerCase()) {
@@ -169,7 +187,11 @@ export async function updateCategory(
     return { ok: false, error: "Yangilashda xatolik" as const };
   }
 
-  // 5) DTO qaytaramiz
+  // 5) Keshni yangilaymiz va DTO qaytaramiz
+  // Kategoriya nomi mahsulot kartalarida ham ko'rinadi -> ikkala keshni yangilaymiz
+  revalidateTag(CACHE_TAGS.categories);
+  revalidateTag(CACHE_TAGS.products);
+
   return {
     ok: true as const,
     data: {
@@ -187,12 +209,16 @@ export async function deleteCategory(
   await dbConnect();
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return { ok: false, error: "NotoвЂgвЂri category id" };
+    return { ok: false, error: "Noto‘g‘ri category id" };
   }
 
   const res = await categoryModel.deleteOne({ _id: id });
   if (res.deletedCount === 0) {
     return { ok: false, error: "Kategoriya topilmadi" };
   }
+
+  // Kategoriya nomi mahsulot kartalarida ham ko'rinadi -> ikkala keshni yangilaymiz
+  revalidateTag(CACHE_TAGS.categories);
+  revalidateTag(CACHE_TAGS.products);
   return { ok: true };
 }

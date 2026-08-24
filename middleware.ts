@@ -9,17 +9,24 @@ const isProtectedRoute = createRouteMatcher([
   "/:locale/profile(.*)",
 ]);
 
+// Bu route'lar Clerk'dan o'tadi, lekin next-intl ularga locale prefiksi
+// qo'shmasligi kerak — aks holda /api/search -> /en/api/search -> 404 bo'ladi.
+const skipIntl = createRouteMatcher(["/api(.*)", "/trpc(.*)"]);
+
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
-  
+
+  if (skipIntl(req)) return;
+
   return intlMiddleware(req);
 });
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Statik fayllar va metadata route'lari (robots.txt, sitemap.xml) chetlab o'tiladi
+    "/((?!_next|_vercel|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|txt|xml|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
 };

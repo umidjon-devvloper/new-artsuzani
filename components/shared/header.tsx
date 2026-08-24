@@ -2,20 +2,17 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Search,
   ShoppingCart,
   Heart,
   Menu,
   LogIn,
-  Palette,
-  X,
   Paintbrush,
 } from "lucide-react";
 import UserBox from "@/components/shared/user-box";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -23,7 +20,7 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
-import { Link } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "./language-switcher";
 import { createUser } from "@/actions/user.actions";
@@ -62,15 +59,25 @@ const Header = ({
 }) => {
   const { user } = useUser();
   const t = useTranslations("Navigation");
+  const pathname = usePathname();
   const calledRef = useRef(false);
 
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  // Navigatsiya havolalari — bitta joyda (desktop va mobil uchun)
+  const NAV_LINKS = [
+    { href: "/", label: t("home") },
+    { href: "/about", label: "About" },
+    { href: "/products", label: t("products") },
+    { href: "/marketplays", label: "Marketplays" },
+    { href: "/workshop", label: "Workshop" },
+    { href: "/blog", label: "Blog" },
+    { href: "/orders", label: t("orders") },
+  ];
+
+  // Joriy sahifani aniqlaydi (aktiv holatni ko'rsatish uchun)
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   const [themeIdx, setThemeIdx] = useState(0);
-  const abortRef = useRef<AbortController | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load saved theme on mount
   useEffect(() => {
@@ -98,43 +105,6 @@ const Header = ({
     document.body.classList.add(themeId);
     localStorage.setItem("bukhara-theme", themeId);
   };
-
-  // LIVE SEARCH (debounce + abort)
-  useEffect(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    if (abortRef.current) abortRef.current.abort();
-
-    if (!query.trim()) {
-      setResults([]);
-      setOpen(false);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    timerRef.current = setTimeout(async () => {
-      const controller = new AbortController();
-      abortRef.current = controller;
-      try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
-          signal: controller.signal,
-          cache: "no-store",
-        });
-        const data = await res.json();
-        setResults(data);
-        setOpen(true);
-      } catch (e: any) {
-        if (e?.name !== "AbortError") console.error("Qidiruv xatosi:", e);
-      } finally {
-        setLoading(false);
-      }
-    }, 200);
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (abortRef.current) abortRef.current.abort();
-    };
-  }, [query]);
 
   // Clerk createUser
   useEffect(() => {
@@ -167,17 +137,6 @@ const Header = ({
     })();
   }, [user]);
 
-  // dropdown outside click
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    function onDocClick(e: MouseEvent) {
-      if (!wrapRef.current) return;
-      if (!wrapRef.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
-  }, []);
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border shadow-soft transition-all duration-500">
       <div className="max-w-8xl mx-auto ">
@@ -188,56 +147,35 @@ const Header = ({
           </Link>
 
           {/* Nav (desktop) */}
-          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            <Link
-              href="/"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
-            >
-              {t("home")}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
-            <Link
-              href="/about"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
-            >
-              About
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
-            <Link
-              href="/products"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
-            >
-              {t("products")}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
-            <Link
-              href="/marketplays"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
-            >
-              Marketplays
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
-            <Link
-              href="/blog"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
-            >
-              Blog
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
-            <Link
-              href="/orders"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium relative group"
-            >
-              {t("orders")}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-            </Link>
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+            {NAV_LINKS.map((l) => {
+              const active = isActive(l.href);
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative font-medium transition-colors group",
+                    active
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-primary",
+                  )}
+                >
+                  {l.label}
+                  <span
+                    className={cn(
+                      "absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300",
+                      active ? "w-full" : "w-0 group-hover:w-full",
+                    )}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right */}
-          <div
-            className="flex items-center space-x-3 sm:space-x-5"
-            ref={wrapRef}
-          >
+          <div className="flex items-center space-x-3 sm:space-x-5">
             <div className="hidden lg:flex">
               <LanguageSwitcher />
             </div>
@@ -301,102 +239,6 @@ const Header = ({
               </div>
             </div>
 
-            {/* Search (desktop) */}
-            <div className="hidden sm:flex items-center relative group">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Explore authentic pieces..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => query && results.length && setOpen(true)}
-                  className="w-32 xl:w-60 pl-12 pr-10 py-5 bg-background/50 backdrop-blur-sm border-border/80 focus-visible:ring-primary rounded-full shadow-sm transition-all duration-300 group-hover:shadow-elegant-light font-sans text-sm"
-                />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors" />
-
-                {/* Clear button */}
-                {query && (
-                  <button
-                    onClick={() => {
-                      setQuery("");
-                      setOpen(false);
-                    }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
-                    title="Clear search"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Dropdown */}
-              {open && (
-                <div className="absolute top-full left-0 mt-3 bg-white border border-border/50 rounded-2xl shadow-elegant-light w-80 max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300 z-50">
-                  {loading && (
-                    <div className="p-6 flex items-center justify-center text-sm text-muted-foreground font-sans">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-3"></div>
-                      Searching masterworks...
-                    </div>
-                  )}
-                  {!loading && results.length === 0 && (
-                    <div className="p-6 text-center text-sm text-muted-foreground font-sans">
-                      No matching pieces found.
-                    </div>
-                  )}
-                  {!loading &&
-                    results.map((item: any) => {
-                      // Highlight matching substring
-                      const indexMatch = item.title
-                        .toLowerCase()
-                        .indexOf(query.toLowerCase());
-                      const beforeMatch = item.title.substring(0, indexMatch);
-                      const matchText = item.title.substring(
-                        indexMatch,
-                        indexMatch + query.length,
-                      );
-                      const afterMatch = item.title.substring(
-                        indexMatch + query.length,
-                      );
-
-                      return (
-                        <Link
-                          key={item._id}
-                          href={`/products/${item._id}`}
-                          className="flex items-center space-x-3 px-4 py-3 hover:bg-muted/50 transition-colors border-b border-border/50 last:border-0"
-                          onClick={() => setOpen(false)}
-                        >
-                          {/* Image preview or fallback icon */}
-                          {item.images?.[0] ? (
-                            <img
-                              src={item.images[0]}
-                              alt={item.title}
-                              className="w-12 h-12 object-cover rounded-md shadow-sm"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center text-xl shadow-sm">
-                              🪡
-                            </div>
-                          )}
-                          <div className="flex-1 font-sans text-sm font-medium text-foreground line-clamp-2">
-                            {indexMatch >= 0 ? (
-                              <>
-                                {beforeMatch}
-                                <span className="bg-primary/20 text-primary font-bold px-0.5 rounded-sm">
-                                  {matchText}
-                                </span>
-                                {afterMatch}
-                              </>
-                            ) : (
-                              item.title
-                            )}
-                          </div>
-                        </Link>
-                      );
-                    })}
-                </div>
-              )}
-            </div>
-
             {/* Favorites */}
             <Link href={"/favorite"} className="sm:block hidden">
               <Button
@@ -423,7 +265,7 @@ const Header = ({
               <SignInButton mode="modal">
                 <Button
                   size="lg"
-                  className="hidden border-border bg-white text-foreground hover:bg-gray-50 hover:text-primary rounded-full md:flex shadow-sm transition-all duration-300"
+                  className="hidden border border-border bg-card text-foreground hover:bg-muted hover:text-primary rounded-full md:flex shadow-sm transition-all duration-300"
                 >
                   Login
                 </Button>
@@ -467,75 +309,29 @@ const Header = ({
                 </SheetHeader>
 
                 <div className="mt-4 space-y-4 p-2">
-                  {/* Mobile search */}
-                  <div className="relative">
-                    <Input
-                      placeholder="Search products..."
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    {query && (
-                      <div className="absolute z-10 left-0 right-0 mt-2 bg-white border rounded-lg shadow max-h-72 overflow-y-auto">
-                        {loading && (
-                          <div className="p-3 text-sm text-gray-500">
-                            Searching…
-                          </div>
-                        )}
-                        {!loading && results.length === 0 && (
-                          <div className="p-3 text-sm text-gray-500">
-                            No results found
-                          </div>
-                        )}
-                        {!loading &&
-                          results.map((item: any) => (
-                            <Link
-                              key={item._id}
-                              href={`/products/${item._id}`}
-                              className="block px-3 py-2 hover:bg-gray-100"
-                            >
-                              {item.title}
-                            </Link>
-                          ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <Separator />
-
                   {/* Nav links */}
-                  <nav className="grid gap-2 text-base font-sans">
-                    <Link
-                      href="/"
-                      className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
-                    >
-                      {t("home")}
-                    </Link>
-                    <Link
-                      href="/about"
-                      className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
-                    >
-                      About
-                    </Link>
-                    <Link
-                      href="/products"
-                      className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
-                    >
-                      {t("products")}
-                    </Link>
-                    <Link
-                      href="/blog"
-                      className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
-                    >
-                      Blog
-                    </Link>
-                    <Link
-                      href="/orders"
-                      className="px-2 py-2 rounded hover:bg-accent hover:text-accent-foreground"
-                    >
-                      {t("orders")}
-                    </Link>
+                  <nav className="grid gap-1.5 text-base font-sans">
+                    {[...NAV_LINKS, { href: "/contact", label: "Contact" }].map(
+                      (l) => {
+                        const active = isActive(l.href);
+                        return (
+                          <SheetClose asChild key={l.href}>
+                            <Link
+                              href={l.href}
+                              aria-current={active ? "page" : undefined}
+                              className={cn(
+                                "px-3 py-2.5 rounded-lg transition-colors",
+                                active
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "text-foreground hover:bg-accent hover:text-accent-foreground",
+                              )}
+                            >
+                              {l.label}
+                            </Link>
+                          </SheetClose>
+                        );
+                      },
+                    )}
                   </nav>
 
                   <Separator />

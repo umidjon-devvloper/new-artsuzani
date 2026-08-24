@@ -37,11 +37,11 @@ export default async function CheckoutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         {/* Left Col: Form */}
         <div className="lg:col-span-7 xl:col-span-8 order-2 lg:order-1">
-          <CheckoutForm userId={userId || ""} guestId={guestId || ""} items={items} />
+          <CheckoutForm userId={userId || ""} items={items} />
         </div>
 
         {/* Right Col: Order Summary */}
-        <div className="lg:col-span-5 xl:col-span-4 order-1 lg:order-2 bg-white/60 backdrop-blur-md rounded-2xl shadow-soft border border-border/60 p-6 sticky top-28">
+        <div className="lg:col-span-5 xl:col-span-4 order-1 lg:order-2 bg-card/70 backdrop-blur-md rounded-2xl shadow-soft border border-border/60 p-6 sticky top-28">
           <h2 className="text-xl font-serif font-bold text-foreground mb-6">
             Order Summary
           </h2>
@@ -54,7 +54,7 @@ export default async function CheckoutPage() {
                 <div key={it._id} className="flex items-center gap-4 text-sm">
                   <div className="relative w-16 h-16 rounded-md overflow-hidden bg-muted shrink-0 border border-border">
                     {p.images?.[0] ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
+                       
                       <img src={p.images[0]} alt={p.title} className="object-cover w-full h-full" />
                     ) : (
                       <span className="grid place-items-center h-full text-xs text-muted-foreground">-</span>

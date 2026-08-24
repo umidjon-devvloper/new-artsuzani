@@ -98,7 +98,7 @@ export async function IncrementCartItem(
 ) {
   await dbConnect();
 
-  let query: any = { _id: new Types.ObjectId(cartItemId) };
+  const query: any = { _id: new Types.ObjectId(cartItemId) };
   if (clerkUserId) {
     const user = await userModel.findOne({ clerkId: clerkUserId }).select("_id");
     if (!user) return;
@@ -120,7 +120,7 @@ export async function DecrementCartItem(
 ) {
   await dbConnect();
 
-  let query: any = { _id: new Types.ObjectId(cartItemId) };
+  const query: any = { _id: new Types.ObjectId(cartItemId) };
   if (clerkUserId) {
     const user = await userModel.findOne({ clerkId: clerkUserId }).select("_id");
     if (!user) return;
@@ -150,7 +150,7 @@ export async function RemoveCartItem(
 ) {
   await dbConnect();
 
-  let query: any = { _id: new Types.ObjectId(cartItemId) };
+  const query: any = { _id: new Types.ObjectId(cartItemId) };
   if (clerkUserId) {
     const user = await userModel.findOne({ clerkId: clerkUserId }).select("_id");
     if (!user) return;
