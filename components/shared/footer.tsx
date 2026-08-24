@@ -11,7 +11,14 @@ export default function Footer() {
           {/* Logo and About */}
           <div className="md:col-span-1 space-y-4">
             <Link href={"/"} className="flex items-center space-x-2 group w-max">
-               <Image src="/logo.png" alt="Logo" width={200} height={200} />
+               <Image
+                 src="/logo.png"
+                 alt="Artsuzani"
+                 width={340}
+                 height={220}
+                 sizes="150px"
+                 className="h-14 w-auto"
+               />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mt-4">
               Discover exquisite, handmade Suzani embroidery from the heart of

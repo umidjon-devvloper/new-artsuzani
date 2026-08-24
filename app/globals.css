@@ -317,3 +317,9 @@
     @apply inline-flex items-center justify-center rounded-md bg-secondary text-secondary-foreground px-4 py-2 font-medium shadow-soft hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-opacity;
   }
 }
+
+/* Hero karusel progress bar (framer-motion o'rniga sof CSS) */
+@keyframes heroProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}

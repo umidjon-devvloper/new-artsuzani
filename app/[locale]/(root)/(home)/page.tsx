@@ -6,6 +6,19 @@ import Products from "@/components/shared/products";
 import { DynamicHeroCarousel } from "@/lib/dynamic-imports";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
+import { absoluteUrl } from "@/lib/site";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return {
+    description:
+      "Discover exquisite, handmade Suzani embroidery from Bukhara, Uzbekistan. Shop unique bags, cushions and textiles — and join a Suzani workshop.",
+    alternates: { canonical: absoluteUrl(locale) },
+  };
+}
 
 export default async function Home() {
   const { userId } = await auth();

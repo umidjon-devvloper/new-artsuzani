@@ -305,7 +305,7 @@ export default function ProductDetail({
                    setAdding(false);
                  }
               }}
-              className="w-full text-base h-14 rounded-full bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-focus)] text-white transition-colors shadow-elegant-light font-semibold tracking-wide border-none"
+              className="w-full text-base h-14 rounded-full bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-focus)] text-[#2a1205] transition-colors shadow-elegant-light font-semibold tracking-wide border-none"
             >
               Buy Now
             </Button>

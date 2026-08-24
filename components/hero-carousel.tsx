@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { cn } from "@/lib/utils";
@@ -48,7 +47,7 @@ export function HeroCarousel({
     {
       loop: true,
       align: "start",
-      duration: 24, // ms per px-ish (smooth)
+      duration: 24,
       dragFree: false,
     },
     [pluginRef.current],
@@ -57,7 +56,6 @@ export function HeroCarousel({
   const [index, setIndex] = React.useState(0);
   const [isHover, setIsHover] = React.useState(false);
 
-  // Sync selected index
   React.useEffect(() => {
     if (!emblaApi) return;
     const onSelect = () => setIndex(emblaApi.selectedScrollSnap());
@@ -68,7 +66,6 @@ export function HeroCarousel({
     };
   }, [emblaApi]);
 
-  // Hover → pause / resume
   React.useEffect(() => {
     if (!emblaApi) return;
     const autoplay = pluginRef.current;
@@ -76,14 +73,8 @@ export function HeroCarousel({
     else autoplay.play();
   }, [isHover, emblaApi]);
 
-  const scrollPrev = React.useCallback(
-    () => emblaApi?.scrollPrev(),
-    [emblaApi],
-  );
-  const scrollNext = React.useCallback(
-    () => emblaApi?.scrollNext(),
-    [emblaApi],
-  );
+  const scrollPrev = React.useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = React.useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
   const scrollTo = React.useCallback(
     (i: number) => emblaApi?.scrollTo(i),
     [emblaApi],
@@ -96,18 +87,17 @@ export function HeroCarousel({
       onMouseLeave={() => setIsHover(false)}
       {...props}
     >
-      {/* Top progress bar */}
+      {/* Top progress bar — sof CSS animatsiya (framer-motion'siz) */}
       <div className="absolute left-0 right-0 top-0 z-30 h-1 bg-black/10 dark:bg-white/10">
-        <motion.div
-          key={`${index}-${isHover}-${autoplayMs}`}
-          initial={{ width: 0 }}
-          animate={{ width: isHover ? 0 : "100%" }}
-          transition={{
-            duration: isHover ? 0 : autoplayMs / 1000,
-            ease: "linear",
+        <div
+          key={`${index}-${isHover}`}
+          className="h-full bg-white/70 dark:bg-white/80 backdrop-blur-[1px] motion-reduce:animate-none"
+          style={{
+            transform: "translateZ(0)",
+            animation: isHover
+              ? "none"
+              : `heroProgress ${autoplayMs}ms linear forwards`,
           }}
-          className="h-full bg-white/70 dark:bg-white/80 backdrop-blur-[1px]"
-          style={{ transform: "translateZ(0)" }}
         />
       </div>
 
@@ -128,32 +118,27 @@ export function HeroCarousel({
                     priority={i === 0}
                     loading={i === 0 ? "eager" : "lazy"}
                     fetchPriority={i === 0 ? "high" : "low"}
-                    sizes="(max-width: 768px) 100vw,
-         (max-width: 1280px) 90vw,
-         1200px"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 92vw, 1200px"
                     className="object-cover"
                   />
 
-                  {/* Darker gradient overlay at bottom for text contrast only */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
 
-                  {/* Caption */}
-                  <AnimatePresence mode="popLayout">
-                    {s.caption && index === i && (
-                      <motion.div
-                        key={`cap-${i}`}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                        className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 max-w-[92%] sm:max-w-[70%]"
-                      >
-                        <span className="inline-flex items-center gap-2 rounded-full bg-white/15 dark:bg-black/25 backdrop-blur-md px-4 py-2 text-sm sm:text-base font-medium text-white shadow-lg ring-1 ring-white/30">
-                          {s.caption}
-                        </span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Caption — CSS transition (AnimatePresence o'rniga) */}
+                  {s.caption && (
+                    <div
+                      className={cn(
+                        "absolute bottom-6 left-6 sm:bottom-10 sm:left-10 max-w-[92%] sm:max-w-[70%] transition-all duration-300 ease-out",
+                        index === i
+                          ? "opacity-100 translate-y-0"
+                          : "opacity-0 translate-y-2 pointer-events-none",
+                      )}
+                    >
+                      <span className="inline-flex items-center gap-2 rounded-full bg-white/15 dark:bg-black/25 backdrop-blur-md px-4 py-2 text-sm sm:text-base font-medium text-white shadow-lg ring-1 ring-white/30">
+                        {s.caption}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -203,8 +188,8 @@ export function HeroCarousel({
         </button>
       </div>
 
-      {/* Dot indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+      {/* Dot indicators — touch target ≥ 24px (p-2 + tashqi dot) */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center">
         {slides.map((_, i) => {
           const active = i === index;
           return (
@@ -212,11 +197,15 @@ export function HeroCarousel({
               key={i}
               aria-label={`Go to slide ${i + 1}`}
               onClick={() => scrollTo(i)}
-              className={cn(
-                "h-2.5 w-2.5 rounded-full transition-all",
-                active ? "w-6 bg-white/90" : "bg-white/50 hover:bg-white/80",
-              )}
-            />
+              className="flex items-center justify-center p-2"
+            >
+              <span
+                className={cn(
+                  "h-2.5 rounded-full transition-all",
+                  active ? "w-6 bg-white/90" : "w-2.5 bg-white/50 hover:bg-white/80",
+                )}
+              />
+            </button>
           );
         })}
       </div>

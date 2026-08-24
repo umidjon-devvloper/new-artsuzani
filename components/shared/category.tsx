@@ -1,8 +1,7 @@
 "use client";
 
-import type * as React from "react";
-import { useState, useEffect, useRef } from "react";
 import { Link } from "@/i18n/routing";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export type CategoryItem = {
@@ -44,73 +43,19 @@ const DEFAULT_ITEMS: CategoryItem[] = [
   },
 ];
 
-const LazyCardImage = ({
-  src,
-  alt,
-  objectPosition = "center center",
-}: {
-  src: string;
-  alt: string;
-  objectPosition?: string;
-}) => {
-  const [loaded, setLoaded] = useState(false);
-  const [inView, setInView] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const timer = setTimeout(() => setInView(true), 300);
-    if (!("IntersectionObserver" in window)) {
-      setInView(true);
-      clearTimeout(timer);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setInView(true);
-          clearTimeout(timer);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "200px", threshold: 0 },
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      clearTimeout(timer);
-    };
-  }, []);
-
+// next/image: o'rnatilgan lazy-loading + AVIF/WebP optimizatsiya.
+// Avval oddiy <img> + qo'lda IntersectionObserver edi (forced reflow manbai).
+const LazyCardImage = ({ src, alt }: { src: string; alt: string }) => {
+  if (!src) return <div className="absolute inset-0 bg-[#f0ece4]" />;
   return (
-    <div ref={ref} className="absolute inset-0 bg-[#f0ece4]">
-      {!loaded && (
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(90deg, #e8e4dc 25%, #d5d0c6 50%, #e8e4dc 75%)",
-            backgroundSize: "200% 100%",
-            animation: "catShimmer 1.2s ease-in-out infinite",
-          }}
-        />
-      )}
-      {inView && src && (
-        <img
-          src={src}
-          alt={alt}
-          className="absolute inset-0 w-full h-full object-contain will-change-transform p-8"
-          style={{
-            opacity: loaded ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            objectPosition,
-          }}
-          onLoad={() => setLoaded(true)}
-          onError={() => setLoaded(true)}
-        />
-      )}
-      <style>{`@keyframes catShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
+    <div className="absolute inset-0 bg-[#f0ece4]">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+        className="object-contain p-8"
+      />
     </div>
   );
 };

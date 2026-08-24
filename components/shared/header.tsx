@@ -140,10 +140,18 @@ const Header = ({
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border shadow-soft transition-all duration-500">
       <div className="max-w-8xl mx-auto ">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 md:h-20 px-4 sm:px-6">
           {/* Logo */}
           <Link href={"/"} className="flex items-center space-x-2 group">
-            <Image src="/logo.png" alt="Logo" width={200} height={200} />
+            <Image
+              src="/logo.png"
+              alt="Artsuzani"
+              width={340}
+              height={220}
+              priority
+              sizes="(max-width: 640px) 96px, 130px"
+              className="h-9 w-auto sm:h-12"
+            />
           </Link>
 
           {/* Nav (desktop) */}
@@ -271,7 +279,12 @@ const Header = ({
                 </Button>
               </SignInButton>
               <SignInButton mode="modal">
-                <Button size="icon" variant="ghost" className="md:hidden">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="md:hidden"
+                  aria-label="Sign in"
+                >
                   <LogIn className="w-5 h-5" />
                 </Button>
               </SignInButton>
@@ -297,6 +310,7 @@ const Header = ({
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label="Open menu"
                   className="md:hidden text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
                 >
                   <Menu className="w-5 h-5" />

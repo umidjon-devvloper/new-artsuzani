@@ -112,7 +112,7 @@ const Products: React.FC<Props> = ({
 
               <Link
                 href={`/products/${product?._id}`}
-                className="flex items-center justify-center w-full py-2.5 bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-focus)] text-white text-sm font-semibold tracking-wide uppercase rounded-[12px] transition-colors duration-300"
+                className="flex items-center justify-center w-full py-2.5 bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-focus)] text-[#2a1205] text-sm font-semibold tracking-wide uppercase rounded-[12px] transition-colors duration-300"
               >
                 View Details
               </Link>
