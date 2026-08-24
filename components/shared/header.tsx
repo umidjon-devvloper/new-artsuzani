@@ -140,7 +140,7 @@ const Header = ({
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border shadow-soft transition-all duration-500">
       <div className="max-w-8xl mx-auto ">
-        <div className="flex items-center justify-between h-16 md:h-20 px-4 sm:px-6">
+        <div className="flex items-center justify-between h-20 md:h-24 px-4 sm:px-6">
           {/* Logo */}
           <Link href={"/"} className="flex items-center space-x-2 group">
             <Image
@@ -149,8 +149,8 @@ const Header = ({
               width={340}
               height={220}
               priority
-              sizes="(max-width: 640px) 96px, 130px"
-              className="h-9 w-auto sm:h-12"
+              sizes="(max-width: 640px) 150px, 200px"
+              className="h-14 w-auto sm:h-16 md:h-[72px]"
             />
           </Link>
 
